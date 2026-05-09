@@ -3,12 +3,14 @@ import ImageUpload from "./ImageUpload";
 
 type Dynasty = {
   name: string;
+  nativeName: string | null;
   slug: string;
   region: string | null;
   description: string | null;
   foundedYear: number | null;
   endedYear: number | null;
   imageUrl: string | null;
+  coatOfArmsUrl: string | null;
   peakTerritoryKm2: number | null;
   definingMoment: string | null;
   livingDescendants: string | null;
@@ -47,6 +49,16 @@ export default function DynastyForm({ initial, action, submitLabel }: Props) {
           />
         </Field>
       </div>
+
+      <Field label="Native name" name="nativeName" hint='Optional. Name in the original script (e.g. "ბაგრატიონი" for Bagrationi).'>
+        <input
+          id="nativeName"
+          name="nativeName"
+          defaultValue={d.nativeName ?? ""}
+          className={inputClass}
+          placeholder="ბაგრატიონი"
+        />
+      </Field>
 
       <Field label="Region" name="region">
         <input
@@ -92,6 +104,7 @@ export default function DynastyForm({ initial, action, submitLabel }: Props) {
       </div>
 
       <ImageUpload name="imageUrl" initialUrl={d.imageUrl ?? null} label="Hero image" />
+      <ImageUpload name="coatOfArmsUrl" initialUrl={d.coatOfArmsUrl ?? null} label="Coat of arms" />
 
       <fieldset className="space-y-4 pt-2 border-t border-stone-200">
         <legend className="font-serif text-base text-stone-800 mt-3 mb-1">Quick facts</legend>

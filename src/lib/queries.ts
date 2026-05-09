@@ -14,6 +14,7 @@ export async function listDynasties() {
     description: d.description,
     foundedYear: d.foundedYear,
     endedYear: d.endedYear,
+    coatOfArmsUrl: d.coatOfArmsUrl,
     figureCount: d._count.figures,
   }));
 }
@@ -106,9 +107,12 @@ export async function getFigureBySlug(slug: string) {
     id: figure.id,
     slug: figure.slug,
     name: figure.name,
+    nativeName: figure.nativeName,
     titles: figure.titles,
     birthYear: figure.birthYear,
     deathYear: figure.deathYear,
+    reignStart: figure.reignStart,
+    reignEnd: figure.reignEnd,
     biography: figure.biography,
     imageUrl: figure.imageUrl,
     dynasty: figure.dynasty,

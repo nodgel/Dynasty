@@ -18,6 +18,8 @@ model Dynasty {
   foundedYear       Int?
   endedYear         Int?
   imageUrl          String?
+  coatOfArmsUrl     String?            // small heraldic badge image
+  nativeName        String?            // name in original script (e.g. "ბაგრატიონი")
   // "Quick facts" metrics surfaced in the sidebar.
   peakTerritoryKm2  Int?               // peak territorial extent in km² (rough)
   definingMoment    String?            // e.g. "Magna Carta (1215)"
@@ -74,10 +76,13 @@ model DynastyEvent {
 model HistoricalFigure {
   id          Int      @id @default(autoincrement())
   name        String
+  nativeName  String?           // name in original script
   slug        String   @unique
   titles      String[] @default([])
   birthYear   Int?
   deathYear   Int?
+  reignStart  Int?              // year reign began (rulers only)
+  reignEnd    Int?              // year reign ended
   biography   String?  @db.Text
   imageUrl    String?
   createdAt   DateTime @default(now())

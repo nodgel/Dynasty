@@ -7,10 +7,13 @@ type RelatedFigure = { id: number; name: string; birthYear: number | null; death
 type Figure = {
   id?: number;
   name: string;
+  nativeName: string | null;
   slug: string;
   titles: string[];
   birthYear: number | null;
   deathYear: number | null;
+  reignStart: number | null;
+  reignEnd: number | null;
   biography: string | null;
   dynastyId: number | null;
   imageUrl: string | null;
@@ -64,6 +67,16 @@ export default function FigureForm({
         </Field>
       </div>
 
+      <Field label="Native name" name="nativeName" hint='Optional. Name in original script (e.g. "თამარი" for Tamar).'>
+        <input
+          id="nativeName"
+          name="nativeName"
+          defaultValue={f.nativeName ?? ""}
+          className={inputClass}
+          placeholder="თამარი"
+        />
+      </Field>
+
       <Field label="Dynasty" name="dynastyId" hint="The dynasty this figure belongs to.">
         <select
           id="dynastyId"
@@ -110,6 +123,27 @@ export default function FigureForm({
             name="deathYear"
             type="number"
             defaultValue={f.deathYear ?? ""}
+            className={inputClass}
+          />
+        </Field>
+      </div>
+
+      <div className="grid sm:grid-cols-2 gap-4">
+        <Field label="Reign start" name="reignStart" hint="Year reign began. Leave blank for non-rulers.">
+          <input
+            id="reignStart"
+            name="reignStart"
+            type="number"
+            defaultValue={f.reignStart ?? ""}
+            className={inputClass}
+          />
+        </Field>
+        <Field label="Reign end" name="reignEnd" hint="Year reign ended (death, abdication, deposition).">
+          <input
+            id="reignEnd"
+            name="reignEnd"
+            type="number"
+            defaultValue={f.reignEnd ?? ""}
             className={inputClass}
           />
         </Field>

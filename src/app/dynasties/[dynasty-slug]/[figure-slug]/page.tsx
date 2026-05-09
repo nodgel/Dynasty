@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import AdSlot from "@/components/AdSlot";
@@ -72,14 +73,30 @@ export default async function FigurePage(
       <AdSlot name="figureHeader" label="Figure header banner" size="970×90 leaderboard" className="mb-8" />
 
       <article>
-        <header className="mb-6">
-          <h1 className="font-serif text-4xl text-stone-900">{figure.name}</h1>
-          {figure.titles.length > 0 && (
-            <p className="mt-2 font-serif italic text-stone-600">{figure.titles.join(" · ")}</p>
+        <header className="mb-6 flex items-start gap-5">
+          {figure.imageUrl && (
+            <Image
+              src={figure.imageUrl}
+              alt={figure.name}
+              width={120}
+              height={120}
+              className="w-24 h-24 sm:w-28 sm:h-28 rounded-md object-cover border border-stone-200 shrink-0"
+              unoptimized
+              priority
+            />
           )}
-          {yrs && (
-            <p className="mt-1 text-sm uppercase tracking-wide text-stone-500">{yrs}</p>
-          )}
+          <div className="flex-1 min-w-0">
+            <h1 className="font-serif text-4xl text-stone-900">{figure.name}</h1>
+            {figure.nativeName && (
+              <p className="mt-1 font-serif italic text-stone-600 text-lg">{figure.nativeName}</p>
+            )}
+            {figure.titles.length > 0 && (
+              <p className="mt-2 font-serif italic text-stone-600">{figure.titles.join(" · ")}</p>
+            )}
+            {yrs && (
+              <p className="mt-1 text-sm uppercase tracking-wide text-stone-500">{yrs}</p>
+            )}
+          </div>
         </header>
 
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
@@ -109,6 +126,12 @@ export default async function FigurePage(
                   <dt className="text-stone-500">Died</dt>
                   <dd>{formatYear(figure.deathYear) || "Unknown"}</dd>
                 </div>
+                {(figure.reignStart != null || figure.reignEnd != null) && (
+                  <div className="flex justify-between gap-3">
+                    <dt className="text-stone-500">Reign</dt>
+                    <dd>{formatYearRange(figure.reignStart, figure.reignEnd) || "—"}</dd>
+                  </div>
+                )}
                 {figure.dynasty && (
                   <div className="flex justify-between gap-3">
                     <dt className="text-stone-500">Dynasty</dt>

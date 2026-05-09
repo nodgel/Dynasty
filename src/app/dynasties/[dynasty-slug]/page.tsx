@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Breadcrumbs from "@/components/Breadcrumbs";
@@ -64,14 +65,43 @@ export default async function DynastyOverviewPage(
       <AdSlot name="dynastyHeader" label="Dynasty header banner" size="970×90 leaderboard" className="mb-8" />
 
       <article>
-        <header className="mb-8">
-          <h1 className="font-serif text-4xl text-stone-900">{dynasty.name}</h1>
-          {(dynasty.region || span) && (
-            <p className="mt-2 text-sm uppercase tracking-wide text-stone-500">
-              {[dynasty.region, span].filter(Boolean).join(" · ")}
-            </p>
+        <header className="mb-8 flex items-start gap-5">
+          {dynasty.coatOfArmsUrl && (
+            <Image
+              src={dynasty.coatOfArmsUrl}
+              alt={`${dynasty.name} coat of arms`}
+              width={96}
+              height={96}
+              className="w-20 h-20 sm:w-24 sm:h-24 object-contain shrink-0"
+              unoptimized
+            />
           )}
+          <div className="flex-1 min-w-0">
+            <h1 className="font-serif text-4xl text-stone-900">{dynasty.name}</h1>
+            {dynasty.nativeName && (
+              <p className="mt-1 font-serif italic text-stone-600 text-lg">{dynasty.nativeName}</p>
+            )}
+            {(dynasty.region || span) && (
+              <p className="mt-2 text-sm uppercase tracking-wide text-stone-500">
+                {[dynasty.region, span].filter(Boolean).join(" · ")}
+              </p>
+            )}
+          </div>
         </header>
+
+        {dynasty.imageUrl && (
+          <figure className="mb-8 -mx-4 sm:mx-0">
+            <Image
+              src={dynasty.imageUrl}
+              alt={`${dynasty.name} hero image`}
+              width={1280}
+              height={400}
+              className="w-full max-h-80 object-cover sm:rounded-md"
+              unoptimized
+              priority
+            />
+          </figure>
+        )}
 
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
           <div>

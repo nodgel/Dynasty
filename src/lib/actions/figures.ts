@@ -26,6 +26,7 @@ function parseIdList(raw: FormDataEntryValue | null): number[] {
 
 function readFigureForm(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim();
+  const nativeName = String(formData.get("nativeName") ?? "").trim() || null;
   const slugRaw = String(formData.get("slug") ?? "").trim();
   const slug = slugify(slugRaw || name);
   const titles = String(formData.get("titles") ?? "")
@@ -34,16 +35,21 @@ function readFigureForm(formData: FormData) {
     .filter(Boolean);
   const by = String(formData.get("birthYear") ?? "").trim();
   const dy = String(formData.get("deathYear") ?? "").trim();
+  const rs = String(formData.get("reignStart") ?? "").trim();
+  const re = String(formData.get("reignEnd") ?? "").trim();
   const biography = String(formData.get("biography") ?? "").trim() || null;
   const dynastyIdRaw = String(formData.get("dynastyId") ?? "").trim();
   const dynastyId = dynastyIdRaw ? Number(dynastyIdRaw) : null;
   const imageUrl = String(formData.get("imageUrl") ?? "").trim() || null;
   return {
     name,
+    nativeName,
     slug,
     titles,
     birthYear: by !== "" ? Number(by) : null,
     deathYear: dy !== "" ? Number(dy) : null,
+    reignStart: rs !== "" ? Number(rs) : null,
+    reignEnd: re !== "" ? Number(re) : null,
     biography,
     dynastyId: Number.isFinite(dynastyId as number) && dynastyId ? dynastyId : null,
     imageUrl,

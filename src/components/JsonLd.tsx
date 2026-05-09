@@ -25,6 +25,7 @@ function isoYear(year: number | null | undefined): string | undefined {
 export function personLd(figure: {
   slug: string;
   name: string;
+  nativeName?: string | null;
   birthYear: number | null;
   deathYear: number | null;
   biography: string | null;
@@ -41,6 +42,7 @@ export function personLd(figure: {
     name: figure.name,
     url,
   };
+  if (figure.nativeName) data.alternateName = figure.nativeName;
   const bd = isoYear(figure.birthYear);
   const dd = isoYear(figure.deathYear);
   if (bd) data.birthDate = bd;
@@ -60,11 +62,13 @@ export function personLd(figure: {
 export function dynastyLd(dynasty: {
   slug: string;
   name: string;
+  nativeName?: string | null;
   description: string | null;
   region: string | null;
   foundedYear: number | null;
   endedYear: number | null;
   imageUrl?: string | null;
+  coatOfArmsUrl?: string | null;
   figures: { slug: string; name: string }[];
 }) {
   const url = `${SITE_URL}/dynasties/${dynasty.slug}`;
@@ -75,6 +79,7 @@ export function dynastyLd(dynasty: {
     url,
     additionalType: "https://schema.org/Family",
   };
+  if (dynasty.nativeName) data.alternateName = dynasty.nativeName;
   if (dynasty.description) data.description = dynasty.description.slice(0, 500);
   if (dynasty.region) data.areaServed = dynasty.region;
   if (dynasty.foundedYear && dynasty.foundedYear >= 1) {
@@ -85,6 +90,11 @@ export function dynastyLd(dynasty: {
   }
   if (dynasty.imageUrl) {
     data.image = dynasty.imageUrl.startsWith("http") ? dynasty.imageUrl : `${SITE_URL}${dynasty.imageUrl}`;
+  }
+  if (dynasty.coatOfArmsUrl) {
+    data.logo = dynasty.coatOfArmsUrl.startsWith("http")
+      ? dynasty.coatOfArmsUrl
+      : `${SITE_URL}${dynasty.coatOfArmsUrl}`;
   }
   if (dynasty.figures.length > 0) {
     data.member = dynasty.figures.map((f) => ({
