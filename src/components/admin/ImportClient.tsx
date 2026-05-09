@@ -24,7 +24,15 @@ const PLACEHOLDER = `[
   }
 ]`;
 
+// Outer wrapper: bumps `runId` to force-remount the inner flow when the user
+// asks to import another batch. useActionState has no built-in reset, so we
+// rely on remounting to clear the previous "applied" / "analyzed" state.
 export default function ImportClient() {
+  const [runId, setRunId] = useState(0);
+  return <ImportFlow key={runId} onReset={() => setRunId((n) => n + 1)} />;
+}
+
+function ImportFlow({ onReset }: { onReset: () => void }) {
   const [analyzeState, analyzeAction, analyzePending] = useActionState<
     AnalyzeResult | null,
     FormData
@@ -38,12 +46,19 @@ export default function ImportClient() {
 
   // After a successful apply, show a result panel.
   if (applyState?.kind === "applied") {
-    return <Result state={applyState} />;
+    return <Result state={applyState} onReset={onReset} />;
   }
 
   // After a successful analyze, show the diff preview.
   if (analyzeState?.kind === "ok") {
-    return <Preview analyze={analyzeState} action={applyAction} pending={applyPending} />;
+    return (
+      <Preview
+        analyze={analyzeState}
+        action={applyAction}
+        pending={applyPending}
+        onReset={onReset}
+      />
+    );
   }
 
   // Initial / error state.
@@ -83,7 +98,13 @@ export default function ImportClient() {
   );
 }
 
-function Result({ state }: { state: Extract<ApplyResult, { kind: "applied" }> }) {
+function Result({
+  state,
+  onReset,
+}: {
+  state: Extract<ApplyResult, { kind: "applied" }>;
+  onReset: () => void;
+}) {
   return (
     <div className="rounded-md border border-emerald-200 bg-emerald-50 p-5">
       <h2 className="font-serif text-lg text-stone-900">Import applied</h2>
@@ -95,7 +116,13 @@ function Result({ state }: { state: Extract<ApplyResult, { kind: "applied" }> })
       </ul>
       <div className="mt-4 flex items-center gap-3 text-sm">
         <Link href="/admin" className="underline text-stone-700">Back to dashboard</Link>
-        <Link href="/admin/import" className="underline text-stone-700">Import another batch</Link>
+        <button
+          type="button"
+          onClick={onReset}
+          className="underline text-stone-700 hover:text-stone-900"
+        >
+          Import another batch
+        </button>
       </div>
     </div>
   );
@@ -105,10 +132,12 @@ function Preview({
   analyze,
   action,
   pending,
+  onReset,
 }: {
   analyze: Extract<AnalyzeResult, { kind: "ok" }>;
   action: (fd: FormData) => void;
   pending: boolean;
+  onReset: () => void;
 }) {
   const newRows = analyze.rows.filter((r) => r.status.kind === "new");
   const conflictRows = analyze.rows.filter((r) => r.status.kind === "exists");
@@ -190,9 +219,13 @@ function Preview({
         >
           {pending ? "Applying…" : "Apply selected"}
         </button>
-        <Link href="/admin/import" className="text-sm text-stone-500 hover:text-stone-900">
+        <button
+          type="button"
+          onClick={onReset}
+          className="text-sm text-stone-500 hover:text-stone-900"
+        >
           Discard and start over
-        </Link>
+        </button>
       </div>
     </form>
   );
