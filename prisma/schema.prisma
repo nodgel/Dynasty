@@ -25,8 +25,50 @@ model Dynasty {
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
   figures           HistoricalFigure[]
+  events            DynastyEvent[]
 
   @@index([slug])
+}
+
+enum EventKind {
+  CONFLICT
+  ALLIANCE
+  MARRIAGE
+  SUCCESSION
+  OTHER
+}
+
+// A war, treaty, marriage, succession crisis — anything that ties multiple
+// dynasties together. Events are first-class entities so the same Hundred
+// Years' War can show up on Plantagenet, Valois, and Capetian pages with
+// different per-dynasty roles.
+model HistoricalEvent {
+  id           Int            @id @default(autoincrement())
+  slug         String         @unique
+  title        String
+  year         Int?
+  endYear      Int?
+  description  String?        @db.Text
+  kind         EventKind      @default(OTHER)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  participants DynastyEvent[]
+
+  @@index([slug])
+}
+
+// Join row: one dynasty's involvement in one event, with an optional free-form
+// role like "victor", "annexed", "ally", "married into".
+model DynastyEvent {
+  dynastyId Int
+  eventId   Int
+  role      String?
+
+  dynasty Dynasty         @relation(fields: [dynastyId], references: [id], onDelete: Cascade)
+  event   HistoricalEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@id([dynastyId, eventId])
+  @@index([eventId])
 }
 
 model HistoricalFigure {

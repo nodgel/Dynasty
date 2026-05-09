@@ -5,9 +5,10 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import AdSlot from "@/components/AdSlot";
 import FamilyTreeViewer from "@/components/FamilyTreeViewer";
 import PremiumExportButton from "@/components/PremiumExportButton";
-import { getDynastyBySlug, getDynastyTree, listAllDynastySlugs } from "@/lib/queries";
+import { getDynastyBySlug, getDynastyTree, getDynastyEvents, listAllDynastySlugs } from "@/lib/queries";
 import { formatYearRange } from "@/lib/format";
 import JsonLd, { dynastyLd } from "@/components/JsonLd";
+import RelatedEvents from "@/components/RelatedEvents";
 
 type Params = { "dynasty-slug": string };
 
@@ -41,6 +42,7 @@ export default async function DynastyOverviewPage(
   if (!dynasty) notFound();
 
   const tree = await getDynastyTree(dynasty.id);
+  const events = await getDynastyEvents(dynasty.id);
 
   const span =
     dynasty.foundedYear && dynasty.endedYear
@@ -113,6 +115,8 @@ export default async function DynastyOverviewPage(
                 ))}
               </ul>
             </section>
+
+            <RelatedEvents events={events} />
           </div>
 
           <aside className="space-y-6">

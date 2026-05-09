@@ -20,19 +20,21 @@ export default async function AdminDashboard() {
       prisma.historicalFigure.count(),
       prisma.parentChild.count(),
       prisma.spouse.count(),
+      prisma.historicalEvent.count(),
     ]),
   ]);
-  const [dCount, fCount, pcCount, sCount] = counts;
+  const [dCount, fCount, pcCount, sCount, eCount] = counts;
 
   return (
     <AdminShell>
       <main className="mx-auto max-w-6xl px-4 py-8">
         <h1 className="font-serif text-2xl text-stone-900">Dashboard</h1>
 
-        <section className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <section className="mt-6 grid grid-cols-2 sm:grid-cols-5 gap-3">
           {[
             ["Dynasties", dCount],
             ["Figures", fCount],
+            ["Events", eCount],
             ["Parent links", pcCount],
             ["Spouse pairs", sCount],
           ].map(([label, n]) => (

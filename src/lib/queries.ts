@@ -127,3 +127,45 @@ export async function listAllFigureSlugs() {
 export async function listAllDynastySlugs() {
   return prisma.dynasty.findMany({ select: { slug: true } });
 }
+
+// All events that involve the given dynasty, plus per-event the OTHER
+// dynasties involved (the "rabbit-hole" links to render in the UI). The
+// current dynasty itself is excluded from the otherParticipants list.
+export async function getDynastyEvents(dynastyId: number) {
+  const rows = await prisma.dynastyEvent.findMany({
+    where: { dynastyId },
+    include: {
+      event: {
+        include: {
+          participants: {
+            include: { dynasty: { select: { slug: true, name: true } } },
+          },
+        },
+      },
+    },
+  });
+
+  return rows
+    .map((row) => {
+      const e = row.event;
+      const others = e.participants
+        .filter((p) => p.dynastyId !== dynastyId)
+        .map((p) => ({
+          slug: p.dynasty.slug,
+          name: p.dynasty.name,
+          role: p.role,
+        }));
+      return {
+        id: e.id,
+        slug: e.slug,
+        title: e.title,
+        year: e.year,
+        endYear: e.endYear,
+        kind: e.kind,
+        description: e.description,
+        ownRole: row.role,
+        otherParticipants: others,
+      };
+    })
+    .sort((a, b) => (a.year ?? Number.MAX_SAFE_INTEGER) - (b.year ?? Number.MAX_SAFE_INTEGER));
+}
