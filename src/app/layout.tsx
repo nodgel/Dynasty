@@ -45,9 +45,10 @@ export default function RootLayout({
           <div className="mx-auto max-w-6xl px-4 py-8 text-sm text-stone-500 flex flex-col sm:flex-row sm:justify-between gap-2">
             <p>© {new Date().getFullYear()} Dynastica. Historical content for educational use.</p>
             <nav aria-label="Footer">
-              <ul className="flex gap-4">
+              <ul className="flex flex-wrap gap-4">
                 <li><Link href="/dynasties" className="hover:underline">Dynasties</Link></li>
                 <li><Link href="/about" className="hover:underline">About</Link></li>
+                <li><Link href="/privacy" className="hover:underline">Privacy</Link></li>
               </ul>
             </nav>
           </div>
