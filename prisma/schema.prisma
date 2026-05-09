@@ -1,0 +1,78 @@
+// Prisma schema for Historical Genealogy & Dynasty Database
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Dynasty {
+  id          Int                @id @default(autoincrement())
+  name        String
+  slug        String             @unique
+  description String?            @db.Text
+  region      String?
+  foundedYear Int?
+  endedYear   Int?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  figures     HistoricalFigure[]
+
+  @@index([slug])
+}
+
+model HistoricalFigure {
+  id          Int      @id @default(autoincrement())
+  name        String
+  slug        String   @unique
+  titles      String[] @default([])
+  birthYear   Int?
+  deathYear   Int?
+  biography   String?  @db.Text
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  dynasty   Dynasty? @relation(fields: [dynastyId], references: [id])
+  dynastyId Int?
+
+  // Parent-child: directional self M:M via explicit join table
+  parentLinks ParentChild[] @relation("AsChild")
+  childLinks  ParentChild[] @relation("AsParent")
+
+  // Spouses: symmetric self M:M via explicit join table
+  spouseLinksA Spouse[] @relation("SpouseA")
+  spouseLinksB Spouse[] @relation("SpouseB")
+
+  @@index([slug])
+  @@index([dynastyId])
+}
+
+// Explicit join table so we can express parent → child direction
+// without ambiguity. Each row: parentId is the parent of childId.
+model ParentChild {
+  parentId Int
+  childId  Int
+  parent   HistoricalFigure @relation("AsParent", fields: [parentId], references: [id], onDelete: Cascade)
+  child    HistoricalFigure @relation("AsChild", fields: [childId], references: [id], onDelete: Cascade)
+
+  @@id([parentId, childId])
+  @@index([childId])
+}
+
+// Spouses are symmetric: we store one row per pair, with a convention
+// that aId < bId at the application layer to avoid duplicate pairs.
+model Spouse {
+  aId       Int
+  bId       Int
+  startYear Int?
+  endYear   Int?
+  a         HistoricalFigure @relation("SpouseA", fields: [aId], references: [id], onDelete: Cascade)
+  b         HistoricalFigure @relation("SpouseB", fields: [bId], references: [id], onDelete: Cascade)
+
+  @@id([aId, bId])
+  @@index([bId])
+}
