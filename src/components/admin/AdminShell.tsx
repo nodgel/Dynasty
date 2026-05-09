@@ -15,6 +15,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
               <li><Link href="/admin/events" className="hover:text-stone-900">Events</Link></li>
               <li><Link href="/admin/dynasties/new" className="hover:text-stone-900">+ Dynasty</Link></li>
               <li><Link href="/admin/events/new" className="hover:text-stone-900">+ Event</Link></li>
+              <li><Link href="/admin/import" className="hover:text-stone-900">Import</Link></li>
             </ul>
           </nav>
           <div className="ml-auto flex items-center gap-3 text-sm">
