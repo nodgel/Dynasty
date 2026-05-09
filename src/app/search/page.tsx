@@ -11,6 +11,52 @@ export const metadata: Metadata = {
 
 type SearchParams = { q?: string };
 
+type DynastyHit = {
+  slug: string;
+  name: string;
+  region: string | null;
+};
+
+type FigureHit = {
+  slug: string;
+  name: string;
+  birthYear: number | null;
+  deathYear: number | null;
+  dynastySlug: string | null;
+  dynastyName: string | null;
+};
+
+// Search uses Postgres' unaccent() so "suleyman" matches "Süleyman", "zofia"
+// matches "Žofia", etc. Prisma's high-level findMany doesn't expose unaccent,
+// so we drop to $queryRaw with parameterized template literals (still safe
+// from SQL injection — Prisma escapes interpolated values).
+async function searchDynasties(q: string): Promise<DynastyHit[]> {
+  return prisma.$queryRaw<DynastyHit[]>`
+    SELECT slug, name, region
+    FROM "Dynasty"
+    WHERE unaccent(name) ILIKE unaccent(${`%${q}%`})
+    ORDER BY name ASC
+    LIMIT 10
+  `;
+}
+
+async function searchFigures(q: string): Promise<FigureHit[]> {
+  return prisma.$queryRaw<FigureHit[]>`
+    SELECT
+      f.slug,
+      f.name,
+      f."birthYear",
+      f."deathYear",
+      d.slug AS "dynastySlug",
+      d.name AS "dynastyName"
+    FROM "HistoricalFigure" f
+    LEFT JOIN "Dynasty" d ON d.id = f."dynastyId"
+    WHERE unaccent(f.name) ILIKE unaccent(${`%${q}%`})
+    ORDER BY f.name ASC
+    LIMIT 20
+  `;
+}
+
 export default async function SearchPage({
   searchParams,
 }: {
@@ -19,25 +65,8 @@ export default async function SearchPage({
   const { q } = await searchParams;
   const query = (q ?? "").trim();
 
-  const [dynasties, figures] = query
-    ? await Promise.all([
-        prisma.dynasty.findMany({
-          where: { name: { contains: query, mode: "insensitive" } },
-          take: 10,
-          select: { slug: true, name: true, region: true },
-        }),
-        prisma.historicalFigure.findMany({
-          where: { name: { contains: query, mode: "insensitive" } },
-          take: 20,
-          select: {
-            slug: true,
-            name: true,
-            birthYear: true,
-            deathYear: true,
-            dynasty: { select: { slug: true, name: true } },
-          },
-        }),
-      ])
+  const [dynasties, figures]: [DynastyHit[], FigureHit[]] = query
+    ? await Promise.all([searchDynasties(query), searchFigures(query)])
     : [[], []];
 
   return (
@@ -77,15 +106,15 @@ export default async function SearchPage({
           <ul className="space-y-1.5">
             {figures.map((f) => (
               <li key={f.slug}>
-                {f.dynasty ? (
-                  <Link href={`/dynasties/${f.dynasty.slug}/${f.slug}`} className="wiki-link">
+                {f.dynastySlug ? (
+                  <Link href={`/dynasties/${f.dynastySlug}/${f.slug}`} className="wiki-link">
                     {f.name}
                   </Link>
                 ) : (
                   <span>{f.name}</span>
                 )}
                 <span className="ml-2 text-xs text-stone-500">
-                  {formatYearRange(f.birthYear, f.deathYear) || "?"} {f.dynasty ? `· ${f.dynasty.name}` : ""}
+                  {formatYearRange(f.birthYear, f.deathYear) || "?"} {f.dynastyName ? `· ${f.dynastyName}` : ""}
                 </span>
               </li>
             ))}
