@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Lora } from "next/font/google";
 import Link from "next/link";
+import Script from "next/script";
 import "./globals.css";
 import Header from "@/components/Header";
 
@@ -31,6 +32,12 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${lora.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-white text-stone-900">
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6464335713430876"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
         <Header />
         <div className="flex-1">{children}</div>
         <footer className="border-t border-stone-200 mt-16">
