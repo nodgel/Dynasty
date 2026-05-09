@@ -17,6 +17,7 @@ model Dynasty {
   region      String?
   foundedYear Int?
   endedYear   Int?
+  imageUrl    String?
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
   figures     HistoricalFigure[]
