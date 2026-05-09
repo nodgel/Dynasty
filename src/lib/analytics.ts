@@ -10,4 +10,4 @@
 //   4. Paste it below as a string, redeploy, and analytics start flowing.
 //
 // Empty string = GA scripts are not loaded at all (zero traffic to Google).
-export const GA_MEASUREMENT_ID = "" as string;
+export const GA_MEASUREMENT_ID = "G-7HV65PQEJM" as string;
