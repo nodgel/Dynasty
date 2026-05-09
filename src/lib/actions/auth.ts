@@ -10,7 +10,7 @@ import {
 export async function signInAction(formData: FormData): Promise<void> {
   const password = String(formData.get("password") ?? "");
   const next = String(formData.get("next") ?? "/admin");
-  if (!verifyPassword(password)) {
+  if (!(await verifyPassword(password))) {
     redirect("/admin/login?error=1");
   }
   await setSessionCookie();

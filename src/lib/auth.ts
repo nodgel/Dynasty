@@ -1,11 +1,8 @@
-import "server-only";
-import { createHmac, timingSafeEqual, randomBytes } from "node:crypto";
-import { cookies } from "next/headers";
-
-// HMAC-signed session cookie. No DB sessions, no third-party auth library —
-// fits the Path-A "single admin" model. Format:
-//   <base64url payload>.<base64url HMAC-SHA256(payload, AUTH_SECRET)>
+// HMAC-signed session cookie. Uses Web Crypto API so it works in both the
+// Node runtime (server actions, route handlers) and the Edge runtime
+// (middleware) without changing imports.
 //
+// Cookie format: <base64url payload>.<base64url HMAC-SHA256(payload, AUTH_SECRET)>
 // Required env vars:
 //   ADMIN_PASSWORD — the literal admin password
 //   AUTH_SECRET    — long random string used to sign cookies (rotate to
@@ -30,51 +27,85 @@ function getSecret(): string {
   return secret;
 }
 
-function b64url(buf: Buffer | string): string {
-  return Buffer.from(buf).toString("base64url");
+const enc = new TextEncoder();
+const dec = new TextDecoder();
+
+function bytesToB64Url(bytes: ArrayBuffer | Uint8Array): string {
+  const u = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+  let s = "";
+  for (let i = 0; i < u.length; i++) s += String.fromCharCode(u[i]);
+  return btoa(s).replaceAll("+", "-").replaceAll("/", "_").replace(/=+$/, "");
 }
 
-function fromB64url(s: string): Buffer {
-  return Buffer.from(s, "base64url");
+function b64UrlToBytes(s: string): Uint8Array {
+  const norm = s.replaceAll("-", "+").replaceAll("_", "/");
+  const padded = norm + "=".repeat((4 - (norm.length % 4)) % 4);
+  const bin = atob(padded);
+  const u = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+  return u;
 }
 
-function sign(payload: string, secret: string): string {
-  return createHmac("sha256", secret).update(payload).digest("base64url");
+async function importKey(secret: string): Promise<CryptoKey> {
+  return crypto.subtle.importKey(
+    "raw",
+    enc.encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign", "verify"]
+  );
 }
 
-export function verifyPassword(input: string): boolean {
+async function signHmac(payload: string, secret: string): Promise<string> {
+  const key = await importKey(secret);
+  const sig = await crypto.subtle.sign("HMAC", key, enc.encode(payload));
+  return bytesToB64Url(sig);
+}
+
+function constantTimeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let result = 0;
+  for (let i = 0; i < a.length; i++) {
+    result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return result === 0;
+}
+
+export async function verifyPassword(input: string): Promise<boolean> {
   const expected = process.env.ADMIN_PASSWORD;
   if (!expected) return false;
-  const a = Buffer.from(input);
-  const b = Buffer.from(expected);
-  if (a.length !== b.length) return false;
-  return timingSafeEqual(a, b);
+  return constantTimeEqual(input, expected);
 }
 
-export function createSessionCookieValue(): string {
+export async function createSessionCookieValue(): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
   const payload: SessionPayload = {
     role: "admin",
     iat: now,
     exp: now + COOKIE_MAX_AGE,
   };
-  const encoded = b64url(JSON.stringify(payload));
-  const signature = sign(encoded, getSecret());
+  const encoded = bytesToB64Url(enc.encode(JSON.stringify(payload)));
+  const signature = await signHmac(encoded, getSecret());
   return `${encoded}.${signature}`;
 }
 
-export function verifySessionCookieValue(value: string | undefined | null): SessionPayload | null {
+export async function verifySessionCookieValue(
+  value: string | undefined | null
+): Promise<SessionPayload | null> {
   if (!value) return null;
   const [encoded, signature] = value.split(".");
   if (!encoded || !signature) return null;
-  const expected = sign(encoded, getSecret());
-  const a = Buffer.from(signature);
-  const b = Buffer.from(expected);
-  if (a.length !== b.length) return null;
-  if (!timingSafeEqual(a, b)) return null;
+  let expected: string;
+  try {
+    expected = await signHmac(encoded, getSecret());
+  } catch {
+    return null;
+  }
+  if (!constantTimeEqual(signature, expected)) return null;
+
   let payload: SessionPayload;
   try {
-    payload = JSON.parse(fromB64url(encoded).toString("utf8"));
+    payload = JSON.parse(dec.decode(b64UrlToBytes(encoded)));
   } catch {
     return null;
   }
@@ -83,14 +114,19 @@ export function verifySessionCookieValue(value: string | undefined | null): Sess
   return payload;
 }
 
+// Server-only helpers (read/write the cookie store). These can't run in the
+// middleware, so they're loaded lazily — the middleware only ever calls
+// verifySessionCookieValue() above, which is runtime-agnostic.
 export async function getSession(): Promise<SessionPayload | null> {
+  const { cookies } = await import("next/headers");
   const c = await cookies();
   return verifySessionCookieValue(c.get(COOKIE_NAME)?.value);
 }
 
 export async function setSessionCookie() {
+  const { cookies } = await import("next/headers");
   const c = await cookies();
-  c.set(COOKIE_NAME, createSessionCookieValue(), {
+  c.set(COOKIE_NAME, await createSessionCookieValue(), {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
@@ -100,14 +136,9 @@ export async function setSessionCookie() {
 }
 
 export async function clearSessionCookie() {
+  const { cookies } = await import("next/headers");
   const c = await cookies();
   c.delete(COOKIE_NAME);
 }
 
 export const SESSION_COOKIE_NAME = COOKIE_NAME;
-
-// Helper for first-time setup: prints a generator suggestion if AUTH_SECRET
-// looks weak. Used by the admin login page banner.
-export function suggestStrongSecret(): string {
-  return randomBytes(48).toString("base64url");
-}
