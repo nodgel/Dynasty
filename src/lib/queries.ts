@@ -110,6 +110,7 @@ export async function getFigureBySlug(slug: string) {
     birthYear: figure.birthYear,
     deathYear: figure.deathYear,
     biography: figure.biography,
+    imageUrl: figure.imageUrl,
     dynasty: figure.dynasty,
     parents,
     children,

@@ -25,6 +25,9 @@ function readForm(formData: FormData) {
   const fy = String(formData.get("foundedYear") ?? "").trim();
   const ey = String(formData.get("endedYear") ?? "").trim();
   const imageUrl = String(formData.get("imageUrl") ?? "").trim() || null;
+  const definingMoment = String(formData.get("definingMoment") ?? "").trim() || null;
+  const ptk = String(formData.get("peakTerritoryKm2") ?? "").trim();
+  const livingDescendants = String(formData.get("livingDescendants") ?? "").trim() || null;
   return {
     name,
     slug,
@@ -33,6 +36,9 @@ function readForm(formData: FormData) {
     foundedYear: fy ? Number(fy) : null,
     endedYear: ey ? Number(ey) : null,
     imageUrl,
+    definingMoment,
+    peakTerritoryKm2: ptk ? Number(ptk) : null,
+    livingDescendants,
   };
 }
 

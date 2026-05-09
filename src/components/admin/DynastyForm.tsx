@@ -9,6 +9,9 @@ type Dynasty = {
   foundedYear: number | null;
   endedYear: number | null;
   imageUrl: string | null;
+  peakTerritoryKm2: number | null;
+  definingMoment: string | null;
+  livingDescendants: string | null;
 };
 
 type Props = {
@@ -89,6 +92,42 @@ export default function DynastyForm({ initial, action, submitLabel }: Props) {
       </div>
 
       <ImageUpload name="imageUrl" initialUrl={d.imageUrl ?? null} label="Hero image" />
+
+      <fieldset className="space-y-4 pt-2 border-t border-stone-200">
+        <legend className="font-serif text-base text-stone-800 mt-3 mb-1">Quick facts</legend>
+        <p className="text-xs text-stone-500 -mt-2">Optional. Each populates a row in the dynasty page sidebar.</p>
+
+        <Field label="Defining moment" name="definingMoment" hint="A short signature event. e.g. “Battle of Didgori (1121)” or “Magna Carta (1215)”.">
+          <input
+            id="definingMoment"
+            name="definingMoment"
+            defaultValue={d.definingMoment ?? ""}
+            className={inputClass}
+            placeholder="Battle of Didgori (1121)"
+          />
+        </Field>
+
+        <Field label="Peak territory (km²)" name="peakTerritoryKm2" hint="Approximate maximum land area. Leave blank if unknown.">
+          <input
+            id="peakTerritoryKm2"
+            name="peakTerritoryKm2"
+            type="number"
+            defaultValue={d.peakTerritoryKm2 ?? ""}
+            className={inputClass}
+            placeholder="6000000"
+          />
+        </Field>
+
+        <Field label="Living descendants" name="livingDescendants" hint="Free-form. e.g. “Extinct (1700)”, “Reigning in Spain”, “Cadet branches survive”.">
+          <input
+            id="livingDescendants"
+            name="livingDescendants"
+            defaultValue={d.livingDescendants ?? ""}
+            className={inputClass}
+            placeholder="Reigning in Spain"
+          />
+        </Field>
+      </fieldset>
 
       <div className="pt-2">
         <button

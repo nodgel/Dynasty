@@ -7,6 +7,7 @@ import FamilyTreeViewer from "@/components/FamilyTreeViewer";
 import PremiumExportButton from "@/components/PremiumExportButton";
 import { getDynastyBySlug, getDynastyTree, listAllDynastySlugs } from "@/lib/queries";
 import { formatYearRange } from "@/lib/format";
+import JsonLd, { dynastyLd } from "@/components/JsonLd";
 
 type Params = { "dynasty-slug": string };
 
@@ -50,6 +51,7 @@ export default async function DynastyOverviewPage(
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8">
+      <JsonLd data={dynastyLd(dynasty)} />
       <Breadcrumbs
         items={[
           { href: "/", label: "Home" },
@@ -120,19 +122,43 @@ export default async function DynastyOverviewPage(
               <dl className="space-y-1.5 text-stone-700">
                 {dynasty.region && (
                   <div className="flex justify-between gap-3">
-                    <dt className="text-stone-500">Region</dt>
-                    <dd>{dynasty.region}</dd>
+                    <dt className="text-stone-500 shrink-0">Region</dt>
+                    <dd className="text-right">{dynasty.region}</dd>
                   </div>
                 )}
                 {span && (
                   <div className="flex justify-between gap-3">
-                    <dt className="text-stone-500">Span</dt>
-                    <dd>{span}</dd>
+                    <dt className="text-stone-500 shrink-0">Span</dt>
+                    <dd className="text-right">{span}</dd>
+                  </div>
+                )}
+                {dynasty.foundedYear && dynasty.endedYear && (
+                  <div className="flex justify-between gap-3">
+                    <dt className="text-stone-500 shrink-0">Longevity</dt>
+                    <dd className="text-right">{dynasty.endedYear - dynasty.foundedYear} years</dd>
+                  </div>
+                )}
+                {dynasty.peakTerritoryKm2 != null && (
+                  <div className="flex justify-between gap-3">
+                    <dt className="text-stone-500 shrink-0">Peak territory</dt>
+                    <dd className="text-right">{dynasty.peakTerritoryKm2.toLocaleString("en-US")} km²</dd>
+                  </div>
+                )}
+                {dynasty.definingMoment && (
+                  <div className="flex justify-between gap-3">
+                    <dt className="text-stone-500 shrink-0">Defining moment</dt>
+                    <dd className="text-right">{dynasty.definingMoment}</dd>
+                  </div>
+                )}
+                {dynasty.livingDescendants && (
+                  <div className="flex justify-between gap-3">
+                    <dt className="text-stone-500 shrink-0">Descendants</dt>
+                    <dd className="text-right">{dynasty.livingDescendants}</dd>
                   </div>
                 )}
                 <div className="flex justify-between gap-3">
-                  <dt className="text-stone-500">Figures</dt>
-                  <dd>{dynasty.figures.length}</dd>
+                  <dt className="text-stone-500 shrink-0">Figures</dt>
+                  <dd className="text-right">{dynasty.figures.length}</dd>
                 </div>
               </dl>
             </div>

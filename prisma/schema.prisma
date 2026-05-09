@@ -10,17 +10,21 @@ datasource db {
 }
 
 model Dynasty {
-  id          Int                @id @default(autoincrement())
-  name        String
-  slug        String             @unique
-  description String?            @db.Text
-  region      String?
-  foundedYear Int?
-  endedYear   Int?
-  imageUrl    String?
-  createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @updatedAt
-  figures     HistoricalFigure[]
+  id                Int                @id @default(autoincrement())
+  name              String
+  slug              String             @unique
+  description       String?            @db.Text
+  region            String?
+  foundedYear       Int?
+  endedYear         Int?
+  imageUrl          String?
+  // "Quick facts" metrics surfaced in the sidebar.
+  peakTerritoryKm2  Int?               // peak territorial extent in km² (rough)
+  definingMoment    String?            // e.g. "Magna Carta (1215)"
+  livingDescendants String?            // free-form: "Extinct (1700)" / "Reigning in Spain"
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  figures           HistoricalFigure[]
 
   @@index([slug])
 }

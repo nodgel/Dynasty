@@ -6,6 +6,7 @@ import FamilyRelations from "@/components/FamilyRelations";
 import RecommendedReading from "@/components/RecommendedReading";
 import { getFigureBySlug, listAllFigureSlugs } from "@/lib/queries";
 import { formatYear, formatYearRange } from "@/lib/format";
+import JsonLd, { personLd } from "@/components/JsonLd";
 
 type Params = { "dynasty-slug": string; "figure-slug": string };
 
@@ -57,6 +58,7 @@ export default async function FigurePage(
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8">
+      <JsonLd data={personLd(figure)} />
       <Breadcrumbs
         items={[
           { href: "/", label: "Home" },
