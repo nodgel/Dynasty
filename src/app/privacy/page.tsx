@@ -105,6 +105,22 @@ export default function PrivacyPolicyPage() {
         <h2 className="font-serif text-xl text-stone-900 mt-8 mb-3">Third-party services</h2>
         <ul className="list-disc pl-6 my-3 space-y-1">
           <li>
+            <strong>Google Analytics.</strong> We use Google Analytics 4 to understand
+            aggregate traffic patterns (which pages are read, where visitors come from). Google
+            Analytics sets its own cookies and may transfer information about your visit
+            (including IP address, in truncated form) to Google. You can opt out by installing
+            the{" "}
+            <a
+              href="https://tools.google.com/dlpage/gaoptout"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="wiki-link"
+            >
+              Google Analytics Opt-out Browser Add-on
+            </a>
+            . We do not link analytics data to identifiable users.
+          </li>
+          <li>
             <strong>Google Fonts.</strong> Typography is loaded via Google Fonts. When you
             request a page, your browser may fetch font files from Google&apos;s servers, which
             transfers your IP address to Google.
