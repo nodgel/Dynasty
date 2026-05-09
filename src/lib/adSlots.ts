@@ -23,21 +23,28 @@
 
 export const PUBLISHER_ID = "ca-pub-6464335713430876";
 
+// Three ad units cover all seven placements:
+//   • 5114495412 — responsive banner, reused for the four 970×90 headers
+//   • 3801413743 — 300×250 rectangle, reused on dynasty + figure sidebars
+//   • 1390423112 — 300×600 half-page, single-use for the dynasty bottom rail
+// Reusing IDs across placements is allowed by AdSense; reporting is just less
+// granular per slot. Swap to per-placement IDs later if you want clearer
+// per-position revenue attribution.
 export const AD_SLOTS = {
   // Home page, top banner
-  homeHeader: "",
+  homeHeader: "5114495412",
   // Dynasties index page, top banner
-  dynastiesIndexHeader: "",
+  dynastiesIndexHeader: "5114495412",
   // Single dynasty page, top banner
-  dynastyHeader: "",
+  dynastyHeader: "5114495412",
   // Single dynasty page, right rail (top)
-  dynastySidebar1: "",
+  dynastySidebar1: "3801413743",
   // Single dynasty page, right rail (bottom, taller)
-  dynastySidebar2: "",
+  dynastySidebar2: "1390423112",
   // Single figure page, top banner
-  figureHeader: "",
+  figureHeader: "5114495412",
   // Single figure page, right rail
-  figureSidebar: "",
+  figureSidebar: "3801413743",
 } as const;
 
 export type AdSlotName = keyof typeof AD_SLOTS;
