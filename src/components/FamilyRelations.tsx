@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { formatYearRange } from "@/lib/format";
 
 type RelatedFigure = { slug: string; name: string; birthYear: number | null; deathYear: number | null };
 
@@ -10,9 +11,7 @@ type Props = {
 };
 
 function years(p: RelatedFigure) {
-  if (p.birthYear && p.deathYear) return `${p.birthYear}–${p.deathYear}`;
-  if (p.birthYear) return `b. ${p.birthYear}`;
-  return null;
+  return formatYearRange(p.birthYear, p.deathYear) || null;
 }
 
 function RelationGroup({

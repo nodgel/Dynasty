@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { prisma } from "@/lib/prisma";
+import { formatYearRange } from "@/lib/format";
 
 export const metadata: Metadata = {
   title: "Search",
@@ -84,7 +85,7 @@ export default async function SearchPage({
                   <span>{f.name}</span>
                 )}
                 <span className="ml-2 text-xs text-stone-500">
-                  {f.birthYear ?? "?"}–{f.deathYear ?? "?"} {f.dynasty ? `· ${f.dynasty.name}` : ""}
+                  {formatYearRange(f.birthYear, f.deathYear) || "?"} {f.dynasty ? `· ${f.dynasty.name}` : ""}
                 </span>
               </li>
             ))}

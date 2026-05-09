@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { formatYearRange } from "@/lib/format";
 
 export type TreeNode = {
   id: number;
@@ -15,10 +16,7 @@ type Props = {
 };
 
 function years(n: TreeNode) {
-  if (n.birthYear && n.deathYear) return `${n.birthYear}–${n.deathYear}`;
-  if (n.birthYear) return `b. ${n.birthYear}`;
-  if (n.deathYear) return `d. ${n.deathYear}`;
-  return null;
+  return formatYearRange(n.birthYear, n.deathYear) || null;
 }
 
 function TreeBranch({ node, dynastySlug }: { node: TreeNode; dynastySlug: string }) {

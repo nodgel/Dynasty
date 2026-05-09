@@ -5,6 +5,7 @@ import AdSlot from "@/components/AdSlot";
 import FamilyRelations from "@/components/FamilyRelations";
 import RecommendedReading from "@/components/RecommendedReading";
 import { getFigureBySlug, listAllFigureSlugs } from "@/lib/queries";
+import { formatYear, formatYearRange } from "@/lib/format";
 
 type Params = { "dynasty-slug": string; "figure-slug": string };
 
@@ -24,10 +25,8 @@ export async function generateMetadata(
   const { "figure-slug": figureSlug } = await params;
   const figure = await getFigureBySlug(figureSlug);
   if (!figure) return { title: "Figure not found" };
-  const yrs =
-    figure.birthYear && figure.deathYear
-      ? ` (${figure.birthYear}–${figure.deathYear})`
-      : "";
+  const range = formatYearRange(figure.birthYear, figure.deathYear);
+  const yrs = range ? ` (${range})` : "";
   const desc =
     figure.biography?.slice(0, 160) ??
     `Biography of ${figure.name}${yrs} — ${figure.dynasty?.name ?? "dynasty"}.`;
@@ -54,12 +53,7 @@ export default async function FigurePage(
     redirect(`/dynasties/${figure.dynasty.slug}/${figure.slug}`);
   }
 
-  const yrs =
-    figure.birthYear && figure.deathYear
-      ? `${figure.birthYear} – ${figure.deathYear}`
-      : figure.birthYear
-      ? `b. ${figure.birthYear}`
-      : null;
+  const yrs = formatYearRange(figure.birthYear, figure.deathYear) || null;
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8">
@@ -107,11 +101,11 @@ export default async function FigurePage(
               <dl className="space-y-1.5 text-stone-700">
                 <div className="flex justify-between gap-3">
                   <dt className="text-stone-500">Born</dt>
-                  <dd>{figure.birthYear ?? "Unknown"}</dd>
+                  <dd>{formatYear(figure.birthYear) || "Unknown"}</dd>
                 </div>
                 <div className="flex justify-between gap-3">
                   <dt className="text-stone-500">Died</dt>
-                  <dd>{figure.deathYear ?? "Unknown"}</dd>
+                  <dd>{formatYear(figure.deathYear) || "Unknown"}</dd>
                 </div>
                 {figure.dynasty && (
                   <div className="flex justify-between gap-3">

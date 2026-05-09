@@ -4,22 +4,16 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Tree, type CustomNodeElementProps, type RawNodeDatum } from "react-d3-tree";
 import Link from "next/link";
 import type { TreeNode } from "./FamilyTreeStatic";
+import { formatYearRange } from "@/lib/format";
 
 type Props = { dynastySlug: string; roots: TreeNode[] };
-
-function formatYears(birth: number | null, death: number | null): string {
-  if (birth && death) return `${birth}–${death}`;
-  if (birth) return `b. ${birth}`;
-  if (death) return `d. ${death}`;
-  return "";
-}
 
 function toRDT(n: TreeNode): RawNodeDatum {
   return {
     name: n.name,
     attributes: {
       slug: n.slug,
-      years: formatYears(n.birthYear, n.deathYear),
+      years: formatYearRange(n.birthYear, n.deathYear),
     },
     children: n.children.map(toRDT),
   };

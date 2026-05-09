@@ -6,6 +6,7 @@ import AdSlot from "@/components/AdSlot";
 import FamilyTreeViewer from "@/components/FamilyTreeViewer";
 import PremiumExportButton from "@/components/PremiumExportButton";
 import { getDynastyBySlug, getDynastyTree, listAllDynastySlugs } from "@/lib/queries";
+import { formatYearRange } from "@/lib/format";
 
 type Params = { "dynasty-slug": string };
 
@@ -104,7 +105,7 @@ export default async function DynastyOverviewPage(
                       {f.name}
                     </Link>
                     <span className="text-xs text-stone-500 whitespace-nowrap">
-                      {f.birthYear ?? "?"} – {f.deathYear ?? "?"}
+                      {formatYearRange(f.birthYear, f.deathYear) || "?"}
                     </span>
                   </li>
                 ))}
