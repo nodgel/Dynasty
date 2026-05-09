@@ -17,7 +17,7 @@ export default async function DynastiesIndexPage() {
   return (
     <main className="mx-auto max-w-6xl px-4 py-8">
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { label: "Dynasties" }]} />
-      <AdSlot label="Index header banner" size="970×90 leaderboard" className="mb-8" />
+      <AdSlot name="dynastiesIndexHeader" label="Index header banner" size="970×90 leaderboard" className="mb-8" />
 
       <header className="mb-8">
         <h1 className="font-serif text-3xl text-stone-900">Dynasties</h1>

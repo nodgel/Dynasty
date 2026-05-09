@@ -69,7 +69,7 @@ export default async function FigurePage(
           { label: figure.name },
         ]}
       />
-      <AdSlot label="Figure header banner" size="970×90 leaderboard" className="mb-8" />
+      <AdSlot name="figureHeader" label="Figure header banner" size="970×90 leaderboard" className="mb-8" />
 
       <article>
         <header className="mb-6">
@@ -139,7 +139,7 @@ export default async function FigurePage(
               />
             )}
 
-            <AdSlot label="Bio sidebar" size="300×250 medium rectangle" variant="rectangle" />
+            <AdSlot name="figureSidebar" label="Bio sidebar" size="300×250 medium rectangle" variant="rectangle" />
           </aside>
         </div>
       </article>

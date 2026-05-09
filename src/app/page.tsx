@@ -9,7 +9,7 @@ export default async function Home() {
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10">
-      <AdSlot label="Header banner" size="970×90 leaderboard" className="mb-10" />
+      <AdSlot name="homeHeader" label="Header banner" size="970×90 leaderboard" className="mb-10" />
 
       <section className="text-center max-w-2xl mx-auto py-8">
         <h1 className="font-serif text-4xl sm:text-5xl tracking-tight text-stone-900">

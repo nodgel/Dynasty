@@ -61,7 +61,7 @@ export default async function DynastyOverviewPage(
           { label: dynasty.name },
         ]}
       />
-      <AdSlot label="Dynasty header banner" size="970×90 leaderboard" className="mb-8" />
+      <AdSlot name="dynastyHeader" label="Dynasty header banner" size="970×90 leaderboard" className="mb-8" />
 
       <article>
         <header className="mb-8">
@@ -120,7 +120,7 @@ export default async function DynastyOverviewPage(
           </div>
 
           <aside className="space-y-6">
-            <AdSlot label="Sidebar 1" size="300×250 medium rectangle" variant="rectangle" />
+            <AdSlot name="dynastySidebar1" label="Sidebar 1" size="300×250 medium rectangle" variant="rectangle" />
             <div className="rounded-md border border-stone-200 bg-stone-50 p-4 text-sm">
               <h3 className="font-serif text-base text-stone-900 mb-2">Quick facts</h3>
               <dl className="space-y-1.5 text-stone-700">
@@ -166,7 +166,7 @@ export default async function DynastyOverviewPage(
                 </div>
               </dl>
             </div>
-            <AdSlot label="Sidebar 2" size="300×600 half page" variant="rectangle" className="min-h-[400px]" />
+            <AdSlot name="dynastySidebar2" label="Sidebar 2" size="300×600 half page" variant="rectangle" className="min-h-[400px]" />
           </aside>
         </div>
       </article>
