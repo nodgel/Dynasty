@@ -94,7 +94,7 @@ export default async function EditDynastyPage({ params }: { params: Promise<Para
           <DeleteButton
             label="Delete dynasty"
             confirmText={`Delete "${dynasty.name}"?`}
-            onConfirm={async () => deleteBound()}
+            onConfirm={deleteBound}
           />
         </section>
       </main>

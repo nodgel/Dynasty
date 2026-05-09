@@ -5,8 +5,7 @@ import { useState, useTransition } from "react";
 type Props = {
   label: string;
   confirmText: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onConfirm: () => Promise<any>;
+  onConfirm: () => Promise<void>;
 };
 
 export default function DeleteButton({ label, confirmText, onConfirm }: Props) {

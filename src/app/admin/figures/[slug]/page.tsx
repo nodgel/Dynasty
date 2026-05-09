@@ -97,7 +97,7 @@ export default async function EditFigurePage({ params }: { params: Promise<Param
           <DeleteButton
             label="Delete figure"
             confirmText={`Delete "${figure.name}"?`}
-            onConfirm={async () => deleteBound()}
+            onConfirm={deleteBound}
           />
         </section>
       </main>
