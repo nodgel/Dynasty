@@ -349,6 +349,361 @@ const dynasties: DynastySeed[] = [
       },
     ],
   },
+  {
+    slug: "house-of-romanov",
+    name: "House of Romanov",
+    region: "Russia / Eurasia",
+    description:
+      "Ruled Russia for over 300 years, transforming a marginalized state into a transcontinental Eurasian empire through autocratic modernization and expansion.",
+    figures: [
+      {
+        slug: "michael-romanov",
+        name: "Michael I",
+        titles: [],
+        birthYear: 1596,
+        deathYear: 1645,
+        biography:
+          "Elected Tsar in 1613 after the \"Time of Troubles,\" founding the dynasty that would rule until the Russian Revolution.",
+      },
+      {
+        slug: "peter-the-great",
+        name: "Peter the Great",
+        titles: [],
+        birthYear: 1672,
+        deathYear: 1725,
+        biography:
+          "A radical reformer who established St. Petersburg as a \"window to the West\" and modernized the Russian military and administration.",
+        // Source dataset names Alexis I (Michael's son) as the parent; Alexis is
+        // not seeded here, so the resolver will warn and skip this link.
+        parents: ["alexis-i"],
+      },
+      {
+        slug: "catherine-the-great",
+        name: "Catherine the Great",
+        titles: [],
+        birthYear: 1729,
+        deathYear: 1796,
+        biography:
+          "An enlightened despot who significantly expanded Russian borders into Poland and the Black Sea region.",
+        // Peter III is not seeded; the resolver will warn and skip.
+        spouses: ["peter-iii"],
+      },
+      {
+        slug: "nicholas-ii",
+        name: "Nicholas II",
+        titles: [],
+        birthYear: 1868,
+        deathYear: 1918,
+        biography:
+          "The last Romanov emperor. His reign was marked by military defeat in the Russo-Japanese War and World War I, culminating in his execution by Bolshevik revolutionaries.",
+      },
+    ],
+  },
+  {
+    slug: "joseon-dynasty",
+    name: "Joseon Dynasty",
+    region: "Korean Peninsula",
+    description:
+      "The final and longest-lived imperial dynasty of Korea, known for its strong Neo-Confucian ideology and high cultural achievement.",
+    figures: [
+      {
+        slug: "king-taejo-joseon",
+        name: "King Taejo (Yi Seong-Gye)",
+        titles: ["King of Joseon"],
+        birthYear: 1335,
+        deathYear: 1408,
+        biography:
+          "A general who overthrew the Goryeo dynasty to found Joseon, establishing the capital at Hanyang (Seoul).",
+      },
+      {
+        slug: "king-sejong-great",
+        name: "King Sejong the Great",
+        titles: ["King of Korea"],
+        birthYear: 1397,
+        deathYear: 1450,
+        biography:
+          "Widely revered for inventing Hangul, the Korean phonetic alphabet, and sponsoring major advancements in science and scholarship.",
+      },
+      {
+        slug: "king-gojong",
+        name: "King Gojong",
+        titles: ["Emperor of Korea"],
+        birthYear: 1852,
+        deathYear: 1919,
+        biography:
+          "The final effective ruler of Korea. He elevated the nation to an empire in a bid for independence before the country was annexed by Japan in 1910.",
+      },
+    ],
+  },
+  {
+    slug: "ottoman-empire",
+    name: "Ottoman Empire",
+    region: "Anatolia / Balkans / Middle East",
+    description:
+      "One of history's most powerful states, bridging Europe, the Middle East, and North Africa for over 600 years.",
+    figures: [
+      {
+        slug: "osman-i",
+        name: "Osman I",
+        titles: [],
+        birthYear: 1258,
+        deathYear: 1324,
+        biography:
+          "The nomadic Turkmen chief who founded the dynasty and began the initial raids against the Byzantine Empire.",
+      },
+      {
+        slug: "mehmed-conqueror",
+        name: "Mehmed II (The Conqueror)",
+        titles: [],
+        birthYear: 1432,
+        deathYear: 1481,
+        biography:
+          "Famously captured Constantinople in 1453, ending the Byzantine Empire and establishing Istanbul as the new Ottoman capital.",
+      },
+      {
+        slug: "suleyman-magnificent",
+        name: "Süleyman the Magnificent",
+        titles: [],
+        birthYear: 1494,
+        deathYear: 1566,
+        biography:
+          "Presided over the peak of Ottoman power, codifying legal systems and expanding the empire deep into Central Europe.",
+      },
+    ],
+  },
+  {
+    slug: "mauryan-empire",
+    name: "Mauryan Empire",
+    region: "South Asia / India",
+    description:
+      "The first empire to unify the majority of the Indian subcontinent, known for its highly organized administration and Ashoka's conversion to pacifism.",
+    figures: [
+      {
+        slug: "chandragupta-maurya",
+        name: "Chandragupta Maurya",
+        titles: [],
+        birthYear: -340,
+        deathYear: -297,
+        biography:
+          "Unified northern India after the vacuum left by Alexander the Great, building an empire that stretched from the Himalayas to the Vindhya Range.",
+      },
+      {
+        slug: "ashoka-great",
+        name: "Ashoka the Great",
+        titles: [],
+        birthYear: -304,
+        deathYear: -232,
+        biography:
+          "After the bloody conquest of Kalinga, he renounced war, converted to Buddhism, and spread the \"Dharma\" across Asia via his famous stone pillar edicts.",
+      },
+    ],
+  },
+  {
+    slug: "chola-dynasty",
+    name: "Chola Dynasty",
+    region: "South India / Coromandel Coast",
+    description:
+      "A Tamil maritime empire that projected naval power across Southeast Asia and was known for its colossal temple architecture.",
+    figures: [
+      {
+        slug: "rajaraja-i",
+        name: "Rajaraja I",
+        titles: [],
+        birthYear: 947,
+        deathYear: 1014,
+        biography:
+          "Built the massive Brihadishvara Temple in Thanjavur and established Chola dominance over the Indian Ocean trade routes.",
+      },
+      {
+        slug: "rajendra-i",
+        name: "Rajendra I",
+        titles: ["Victor of the Ganges"],
+        birthYear: 1012,
+        deathYear: 1044,
+        biography:
+          "Expanded the empire even further, launching an unprecedented naval expedition to Southeast Asia and overrunning the Deccan plateau.",
+        // The dataset leaves "Parents:" blank; Rajendra I was historically the
+        // son of Rajaraja I (the only candidate in this dynasty), so wiring
+        // the link explicitly to make the family-tree view useful.
+        parents: ["rajaraja-i"],
+      },
+    ],
+  },
+  {
+    slug: "abbasid-caliphate",
+    name: "Abbasid Caliphate",
+    region: "Middle East / Mesopotamia",
+    description:
+      "The second great Islamic dynasty, which oversaw the \"Golden Age of Islam\" from their capital in Baghdad.",
+    figures: [
+      {
+        slug: "al-mansur",
+        name: "Al-Mansur",
+        titles: ["Caliph"],
+        birthYear: 714,
+        deathYear: 775,
+        biography:
+          "The true architect of the caliphate who founded the circular city of Baghdad as the administrative heart of the empire.",
+      },
+      {
+        slug: "harun-al-rashid",
+        name: "Harun al-Rashid",
+        titles: ["Caliph"],
+        birthYear: 763,
+        deathYear: 809,
+        biography:
+          "His reign is synonymous with the height of Abbasid scientific and cultural achievement, famously associated with the \"One Thousand and One Nights\".",
+      },
+    ],
+  },
+  {
+    slug: "umayyad-caliphate",
+    name: "Umayyad Caliphate",
+    region: "Syria / Damascus / Spain",
+    description:
+      "The first hereditary Islamic dynasty, responsible for the rapid expansion of Arab rule from Spain to India.",
+    figures: [
+      {
+        slug: "abd-al-malik",
+        name: "Abd al-Malik",
+        titles: ["Caliph"],
+        birthYear: 646,
+        deathYear: 705,
+        biography:
+          "Centralized the empire's administration, made Arabic the official language, and built the Dome of the Rock in Jerusalem.",
+      },
+      {
+        slug: "abd-al-rahman-cordoba",
+        name: "Abd al-Rahman I",
+        titles: ["Emir of Córdoba"],
+        birthYear: 731,
+        deathYear: 788,
+        biography:
+          "A lone survivor of the Umayyad house who fled to Spain after the Abbasid revolution, founding a brilliant successor state in Córdoba.",
+      },
+    ],
+  },
+  {
+    slug: "tokugawa-shogunate",
+    name: "Tokugawa Shogunate",
+    region: "Japan",
+    description:
+      "A centralized military dictatorship that brought 250 years of stability and isolation to Japan during the Edo period.",
+    figures: [
+      {
+        slug: "tokugawa-ieyasu",
+        name: "Tokugawa Ieyasu",
+        titles: [],
+        birthYear: 1543,
+        deathYear: 1616,
+        biography:
+          "Achieved hegemony over Japan by balancing hostile lords and established the bakuhan system of governance.",
+      },
+      {
+        slug: "tokugawa-yoshinobu",
+        name: "Tokugawa Yoshinobu",
+        titles: [],
+        birthYear: 1837,
+        deathYear: 1913,
+        biography:
+          "The 15th and final shogun. He resigned his power during the Meiji Restoration, marking the end of military rule in Japan.",
+      },
+    ],
+  },
+  {
+    slug: "mughal-empire",
+    name: "Mughal Empire",
+    region: "South Asia / North India",
+    description:
+      "A Turco-Mongol dynasty that synthesized Persian and Indian cultures, overseeing an era of unparalleled artistic and economic prosperity.",
+    figures: [
+      {
+        slug: "babur-mughal",
+        name: "Babur",
+        titles: ["Padishah"],
+        birthYear: 1483,
+        deathYear: 1530,
+        biography:
+          "A descendant of Genghis Khan and Timur who founded the Mughal dynasty after winning the Battle of Panipat.",
+      },
+      {
+        slug: "akbar-the-great",
+        name: "Akbar the Great",
+        titles: ["Emperor of India"],
+        birthYear: 1542,
+        deathYear: 1605,
+        biography:
+          "Known for his religious tolerance and for building a centralized, inclusive bureaucratic system that united Hindus and Muslims.",
+      },
+      {
+        slug: "shah-jahan",
+        name: "Shah Jahan",
+        titles: ["Emperor"],
+        birthYear: 1592,
+        deathYear: 1666,
+        biography:
+          "Most famous for commissioning the Taj Mahal as a tomb for his wife, Mumtaz Mahal.",
+      },
+    ],
+  },
+  {
+    slug: "songhai-empire",
+    name: "Songhai Empire",
+    region: "West Africa / Middle Niger",
+    description:
+      "The largest contiguous empire in West African history, which controlled the trans-Saharan gold and salt trade.",
+    figures: [
+      {
+        slug: "sonni-ali",
+        name: "Sonni Ali",
+        titles: [],
+        // Source dataset gives 1464 as accession year; preserved here under
+        // birthYear for consistency with how "(Estimated)" years are handled
+        // elsewhere in the seed (admin can be used to refine if needed).
+        birthYear: 1464,
+        deathYear: 1492,
+        biography:
+          "A ferocious military leader who expanded Songhai's borders and balanced the interests of urban Muslim and rural animist populations.",
+      },
+      {
+        slug: "askia-the-great",
+        name: "Askia the Great (Muhammad I Askia)",
+        titles: ["Askia"],
+        birthYear: 1443,
+        deathYear: 1538,
+        biography:
+          "Usurped the throne and implemented massive political reforms, patronizing scholars and formalizing the imperial bureaucracy.",
+      },
+    ],
+  },
+  {
+    slug: "solomonic-dynasty",
+    name: "Solomonic Dynasty",
+    region: "Horn of Africa / Ethiopia",
+    description:
+      "One of the longest-ruling royal houses in history, claiming direct descent from the biblical King Solomon and the Queen of Sheba.",
+    figures: [
+      {
+        slug: "yekuno-amlak",
+        name: "Yekuno Amlak",
+        titles: ["Emperor of Ethiopia"],
+        // Source dataset gives 1270 as accession year (same caveat as Sonni Ali).
+        birthYear: 1270,
+        deathYear: 1285,
+        biography:
+          "Overthrew the Zagwe dynasty to restore the Solomonic lineage, strengthening Christian rule in the Ethiopian highlands.",
+      },
+      {
+        slug: "haile-selassie",
+        name: "Haile Selassie I",
+        titles: ["King of Kings", "Elect of God"],
+        birthYear: 1892,
+        deathYear: 1975,
+        biography:
+          "The final emperor of the dynasty. He led Ethiopia's resistance against Italian invasion and became a pivotal figure in modern African politics.",
+      },
+    ],
+  },
 ];
 
 async function main() {
