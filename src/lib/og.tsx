@@ -131,9 +131,10 @@ export function ogDynasty(props: {
         <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
           <div style={eyebrow}>Dynasty</div>
           <div style={title}>{props.name}</div>
-          {props.nativeName && (
-            <div style={{ ...subtitle, fontStyle: "italic" }}>{props.nativeName}</div>
-          )}
+          {/* Native name intentionally omitted from OG cards — the default
+              next/og system font doesn't ship Georgian/CJK/Arabic/Hebrew
+              glyphs and renders them as tofu. The actual page shows it fine
+              where the browser handles font fallback. */}
           <div style={subtitle}>
             {[props.region, props.span].filter(Boolean).join(" · ")}
           </div>
@@ -179,9 +180,7 @@ export function ogFigure(props: {
         <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
           {props.dynastyName && <div style={eyebrow}>House of {props.dynastyName}</div>}
           <div style={title}>{props.name}</div>
-          {props.nativeName && (
-            <div style={{ ...subtitle, fontStyle: "italic" }}>{props.nativeName}</div>
-          )}
+          {/* Native name omitted — see ogDynasty for explanation. */}
           {props.titles.length > 0 && (
             <div style={subtitle}>{props.titles.slice(0, 2).join(" · ")}</div>
           )}
