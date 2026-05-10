@@ -16,7 +16,7 @@ let inFlight: Promise<boolean> | null = null;
 async function checkSession(): Promise<boolean> {
   if (cachedAuth !== null) return cachedAuth;
   if (inFlight) return inFlight;
-  inFlight = fetch("/admin/_api/me", { cache: "no-store" })
+  inFlight = fetch("/api/admin/me", { cache: "no-store" })
     .then((r) => r.ok)
     .catch(() => false)
     .then((v) => {

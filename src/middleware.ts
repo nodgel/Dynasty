@@ -4,7 +4,7 @@ import { verifySessionCookieValue, SESSION_COOKIE_NAME } from "@/lib/auth";
 export async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
 
-  if (pathname === "/admin/login" || pathname.startsWith("/admin/_")) {
+  if (pathname === "/admin/login") {
     return NextResponse.next();
   }
 

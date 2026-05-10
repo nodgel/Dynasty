@@ -46,7 +46,7 @@ export default function FigurePicker({ name, label, initial, excludeId, hint }: 
       try {
         const params = new URLSearchParams({ q: query });
         if (excludeId) params.set("exclude", String(excludeId));
-        const res = await fetch(`/admin/_api/figures?${params}`);
+        const res = await fetch(`/api/admin/figures?${params}`);
         const json = await res.json();
         if (active && json.ok) setResults(json.results as Suggestion[]);
       } finally {
