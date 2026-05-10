@@ -11,6 +11,7 @@ export default function Header() {
         <nav aria-label="Primary" className="hidden sm:block">
           <ul className="flex gap-5 text-sm text-stone-700">
             <li><Link href="/dynasties" className="hover:text-stone-900">Dynasties</Link></li>
+            <li><Link href="/contemporaries" className="hover:text-stone-900">Contemporaries</Link></li>
             <li><Link href="/about" className="hover:text-stone-900">About</Link></li>
           </ul>
         </nav>

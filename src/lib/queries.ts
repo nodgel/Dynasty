@@ -166,6 +166,38 @@ export async function listAllDynastySlugs() {
   return prisma.dynasty.findMany({ select: { slug: true } });
 }
 
+// Every figure with both birth and death years known, plus enough dynasty
+// metadata to render a "who was alive in year X" view. Returns the entire
+// dataset (currently ~150 rows × small fields → ~10KB) so a client component
+// can filter in real time without re-querying on every slider movement.
+export async function listAllFiguresWithDates() {
+  const rows = await prisma.historicalFigure.findMany({
+    where: { birthYear: { not: null }, deathYear: { not: null } },
+    select: {
+      slug: true,
+      name: true,
+      birthYear: true,
+      deathYear: true,
+      reignStart: true,
+      reignEnd: true,
+      dynasty: { select: { slug: true, name: true } },
+    },
+    orderBy: { birthYear: "asc" },
+  });
+  return rows.map((r) => ({
+    slug: r.slug,
+    name: r.name,
+    birthYear: r.birthYear!,
+    deathYear: r.deathYear!,
+    reignStart: r.reignStart,
+    reignEnd: r.reignEnd,
+    dynastySlug: r.dynasty?.slug ?? null,
+    dynastyName: r.dynasty?.name ?? null,
+  }));
+}
+
+export type FigureWithDates = Awaited<ReturnType<typeof listAllFiguresWithDates>>[number];
+
 // Aggregations used by the region/era browse pages. We pull every dynasty in
 // one shot (only ~30 rows) and tag in JavaScript — simpler than N round-trips
 // and lets us reuse regionTagsFor / eraTagsFor without Postgres extensions.

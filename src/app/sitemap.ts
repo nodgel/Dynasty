@@ -17,6 +17,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/dynasties`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: `${SITE_URL}/dynasties/region`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
     { url: `${SITE_URL}/dynasties/era`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${SITE_URL}/contemporaries`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
     { url: `${SITE_URL}/about`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
     { url: `${SITE_URL}/privacy`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
   ];
@@ -33,6 +34,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: now,
     changeFrequency: "weekly",
     priority: 0.7,
+  }));
+
+  // Same round years generated for static contemporaries pages.
+  const contemporaryYears: number[] = [];
+  for (let y = -1000; y <= -100; y += 100) contemporaryYears.push(y);
+  for (let y = 0; y <= 2000; y += 50) contemporaryYears.push(y);
+  for (let y = 1500; y <= 1900; y += 25) contemporaryYears.push(y);
+  const contemporaryEntries: MetadataRoute.Sitemap = [...new Set(contemporaryYears)].map((y) => ({
+    url: `${SITE_URL}/contemporaries/${y}`,
+    lastModified: now,
+    changeFrequency: "monthly",
+    priority: 0.5,
   }));
 
   const dynastyEntries: MetadataRoute.Sitemap = dynasties.map((d) => ({
@@ -55,6 +68,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...staticEntries,
     ...regionEntries,
     ...eraEntries,
+    ...contemporaryEntries,
     ...dynastyEntries,
     ...figureEntries,
   ];
