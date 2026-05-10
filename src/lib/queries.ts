@@ -74,22 +74,54 @@ export async function getFigureBySlug(slug: string) {
       dynasty: { select: { slug: true, name: true } },
       parentLinks: {
         include: {
-          parent: { select: { slug: true, name: true, birthYear: true, deathYear: true } },
+          parent: {
+            select: {
+              slug: true,
+              name: true,
+              birthYear: true,
+              deathYear: true,
+              dynasty: { select: { slug: true, name: true } },
+            },
+          },
         },
       },
       childLinks: {
         include: {
-          child: { select: { slug: true, name: true, birthYear: true, deathYear: true } },
+          child: {
+            select: {
+              slug: true,
+              name: true,
+              birthYear: true,
+              deathYear: true,
+              dynasty: { select: { slug: true, name: true } },
+            },
+          },
         },
       },
       spouseLinksA: {
         include: {
-          b: { select: { slug: true, name: true, birthYear: true, deathYear: true } },
+          b: {
+            select: {
+              slug: true,
+              name: true,
+              birthYear: true,
+              deathYear: true,
+              dynasty: { select: { slug: true, name: true } },
+            },
+          },
         },
       },
       spouseLinksB: {
         include: {
-          a: { select: { slug: true, name: true, birthYear: true, deathYear: true } },
+          a: {
+            select: {
+              slug: true,
+              name: true,
+              birthYear: true,
+              deathYear: true,
+              dynasty: { select: { slug: true, name: true } },
+            },
+          },
         },
       },
     },

@@ -155,7 +155,7 @@ export default async function FigurePage(
 
             {figure.dynasty && (
               <FamilyRelations
-                dynastySlug={figure.dynasty.slug}
+                currentDynastySlug={figure.dynasty.slug}
                 parents={figure.parents}
                 children={figure.children}
                 spouses={figure.spouses}
