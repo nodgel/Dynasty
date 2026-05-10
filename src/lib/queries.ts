@@ -1,5 +1,7 @@
 import { prisma } from "./prisma";
 import type { TreeNode } from "@/components/FamilyTreeStatic";
+import { regionTagsFor, type RegionSlug } from "./regions";
+import { eraTagsFor, type EraSlug } from "./eras";
 
 export async function listDynasties() {
   const rows = await prisma.dynasty.findMany({
@@ -162,6 +164,57 @@ export async function listAllFigureSlugs() {
 
 export async function listAllDynastySlugs() {
   return prisma.dynasty.findMany({ select: { slug: true } });
+}
+
+// Aggregations used by the region/era browse pages. We pull every dynasty in
+// one shot (only ~30 rows) and tag in JavaScript — simpler than N round-trips
+// and lets us reuse regionTagsFor / eraTagsFor without Postgres extensions.
+export async function listDynastiesWithCounts() {
+  const rows = await prisma.dynasty.findMany({
+    orderBy: { name: "asc" },
+    include: { _count: { select: { figures: true } } },
+  });
+  return rows.map((d) => ({
+    id: d.id,
+    slug: d.slug,
+    name: d.name,
+    region: d.region,
+    description: d.description,
+    foundedYear: d.foundedYear,
+    endedYear: d.endedYear,
+    coatOfArmsUrl: d.coatOfArmsUrl,
+    figureCount: d._count.figures,
+    regionTags: regionTagsFor(d.region) as RegionSlug[],
+    eraTags: eraTagsFor(d.foundedYear, d.endedYear) as EraSlug[],
+  }));
+}
+
+export type DynastyAggRow = Awaited<ReturnType<typeof listDynastiesWithCounts>>[number];
+
+// For dynasties with no foundedYear/endedYear, fall back to oldest birthYear
+// + youngest deathYear among their figures so era tagging still works.
+export async function listDynastiesWithEraFallback(): Promise<DynastyAggRow[]> {
+  const dynasties = await listDynastiesWithCounts();
+  const needsFallback = dynasties.filter((d) => d.eraTags.length === 0);
+  if (needsFallback.length === 0) return dynasties;
+
+  const fallbackYears = await prisma.historicalFigure.groupBy({
+    by: ["dynastyId"],
+    where: { dynastyId: { in: needsFallback.map((d) => d.id) } },
+    _min: { birthYear: true },
+    _max: { deathYear: true },
+  });
+  const byId = new Map(fallbackYears.map((r) => [r.dynastyId!, r]));
+
+  return dynasties.map((d) => {
+    if (d.eraTags.length > 0) return d;
+    const fb = byId.get(d.id);
+    if (!fb) return d;
+    return {
+      ...d,
+      eraTags: eraTagsFor(fb._min.birthYear, fb._max.deathYear) as EraSlug[],
+    };
+  });
 }
 
 // All events that involve the given dynasty, plus per-event the OTHER

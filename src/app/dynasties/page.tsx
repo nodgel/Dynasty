@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import DynastyCard from "@/components/DynastyCard";
 import AdSlot from "@/components/AdSlot";
@@ -25,6 +26,14 @@ export default async function DynastiesIndexPage() {
           Every ruling house catalogued in Dynastica. Click into a dynasty to see its full lineage
           and the figures who defined it.
         </p>
+        <nav aria-label="Browse" className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+          <Link href="/dynasties/region" className="wiki-link">
+            Browse by region →
+          </Link>
+          <Link href="/dynasties/era" className="wiki-link">
+            Browse by era →
+          </Link>
+        </nav>
       </header>
 
       {dynasties.length === 0 ? (
