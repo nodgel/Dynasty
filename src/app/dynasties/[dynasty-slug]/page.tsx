@@ -11,6 +11,7 @@ import { formatYearRange } from "@/lib/format";
 import JsonLd, { dynastyLd } from "@/components/JsonLd";
 import RelatedEvents from "@/components/RelatedEvents";
 import SeeAlsoDynasties from "@/components/SeeAlsoDynasties";
+import EditFromSiteLink from "@/components/admin/EditFromSiteLink";
 
 type Params = { "dynasty-slug": string };
 
@@ -79,7 +80,10 @@ export default async function DynastyOverviewPage(
             />
           )}
           <div className="flex-1 min-w-0">
-            <h1 className="font-serif text-4xl text-stone-900">{dynasty.name}</h1>
+            <div className="flex items-start justify-between gap-3">
+              <h1 className="font-serif text-4xl text-stone-900">{dynasty.name}</h1>
+              <EditFromSiteLink href={`/admin/dynasties/${dynasty.slug}`} />
+            </div>
             {dynasty.nativeName && (
               <p className="mt-1 font-serif italic text-stone-600 text-lg">{dynasty.nativeName}</p>
             )}

@@ -8,6 +8,7 @@ import RecommendedReading from "@/components/RecommendedReading";
 import { getFigureBySlug, listAllFigureSlugs } from "@/lib/queries";
 import { formatYear, formatYearRange } from "@/lib/format";
 import JsonLd, { personLd } from "@/components/JsonLd";
+import EditFromSiteLink from "@/components/admin/EditFromSiteLink";
 
 type Params = { "dynasty-slug": string; "figure-slug": string };
 
@@ -86,7 +87,10 @@ export default async function FigurePage(
             />
           )}
           <div className="flex-1 min-w-0">
-            <h1 className="font-serif text-4xl text-stone-900">{figure.name}</h1>
+            <div className="flex items-start justify-between gap-3">
+              <h1 className="font-serif text-4xl text-stone-900">{figure.name}</h1>
+              <EditFromSiteLink href={`/admin/figures/${figure.slug}`} />
+            </div>
             {figure.nativeName && (
               <p className="mt-1 font-serif italic text-stone-600 text-lg">{figure.nativeName}</p>
             )}
