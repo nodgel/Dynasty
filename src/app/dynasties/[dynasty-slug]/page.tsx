@@ -6,10 +6,11 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import AdSlot from "@/components/AdSlot";
 import FamilyTreeViewer from "@/components/FamilyTreeViewer";
 import PremiumExportButton from "@/components/PremiumExportButton";
-import { getDynastyBySlug, getDynastyTree, getDynastyEvents, listAllDynastySlugs } from "@/lib/queries";
+import { getDynastyBySlug, getDynastyTree, getDynastyEvents, getRelatedDynasties, listAllDynastySlugs } from "@/lib/queries";
 import { formatYearRange } from "@/lib/format";
 import JsonLd, { dynastyLd } from "@/components/JsonLd";
 import RelatedEvents from "@/components/RelatedEvents";
+import SeeAlsoDynasties from "@/components/SeeAlsoDynasties";
 
 type Params = { "dynasty-slug": string };
 
@@ -44,6 +45,7 @@ export default async function DynastyOverviewPage(
 
   const tree = await getDynastyTree(dynasty.id);
   const events = await getDynastyEvents(dynasty.id);
+  const related = await getRelatedDynasties(dynasty.slug);
 
   const span =
     dynasty.foundedYear && dynasty.endedYear
@@ -147,6 +149,8 @@ export default async function DynastyOverviewPage(
             </section>
 
             <RelatedEvents events={events} />
+
+            <SeeAlsoDynasties sameRegion={related.sameRegion} sameEra={related.sameEra} />
           </div>
 
           <aside className="space-y-6">

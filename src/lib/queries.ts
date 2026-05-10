@@ -198,6 +198,48 @@ export async function listAllFiguresWithDates() {
 
 export type FigureWithDates = Awaited<ReturnType<typeof listAllFiguresWithDates>>[number];
 
+// "See also" suggestions for a dynasty page. Returns two buckets:
+//   • sameRegion — dynasties that share at least one region tag
+//   • sameEra    — dynasties that share at least one era tag
+// Each bucket is at most `take` entries, sorted by start year (chronological).
+// The current dynasty is excluded from both. Buckets may overlap (same dynasty
+// in both is fine — it's a clear "highly related" signal for the user).
+export async function getRelatedDynasties(currentSlug: string, take = 6) {
+  const all = await listDynastiesWithEraFallback();
+  const current = all.find((d) => d.slug === currentSlug);
+  if (!current) return { sameRegion: [], sameEra: [] };
+
+  const others = all.filter((d) => d.slug !== currentSlug);
+
+  const sameRegion = others
+    .filter((d) => d.regionTags.some((t) => current.regionTags.includes(t)))
+    .sort((a, b) => (a.foundedYear ?? 0) - (b.foundedYear ?? 0))
+    .slice(0, take)
+    .map((d) => ({
+      slug: d.slug,
+      name: d.name,
+      region: d.region,
+      foundedYear: d.foundedYear,
+      endedYear: d.endedYear,
+      coatOfArmsUrl: d.coatOfArmsUrl,
+    }));
+
+  const sameEra = others
+    .filter((d) => d.eraTags.some((t) => current.eraTags.includes(t)))
+    .sort((a, b) => (a.foundedYear ?? 0) - (b.foundedYear ?? 0))
+    .slice(0, take)
+    .map((d) => ({
+      slug: d.slug,
+      name: d.name,
+      region: d.region,
+      foundedYear: d.foundedYear,
+      endedYear: d.endedYear,
+      coatOfArmsUrl: d.coatOfArmsUrl,
+    }));
+
+  return { sameRegion, sameEra };
+}
+
 // Aggregations used by the region/era browse pages. We pull every dynasty in
 // one shot (only ~30 rows) and tag in JavaScript — simpler than N round-trips
 // and lets us reuse regionTagsFor / eraTagsFor without Postgres extensions.
