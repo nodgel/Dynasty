@@ -278,6 +278,12 @@ function DiffSection({
                   </span>
                 )}
                 {row.figure.birthYear ?? "?"}–{row.figure.deathYear ?? "?"}
+                {(row.figure.reignStart != null || row.figure.reignEnd != null) && (
+                  <span>
+                    {" · reigned "}
+                    {row.figure.reignStart ?? "?"}–{row.figure.reignEnd ?? "?"}
+                  </span>
+                )}
               </div>
               {row.status.kind === "invalid" && (
                 <ul className="mt-1 text-xs text-red-600 list-disc pl-4">

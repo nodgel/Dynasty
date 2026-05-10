@@ -11,10 +11,13 @@ import { getSession } from "@/lib/auth";
 export type ImportFigure = {
   name: string;
   slug: string;
+  nativeName?: string | null;
   dynasty?: string | null;
   description?: string | null;
   birthYear?: number | null;
   deathYear?: number | null;
+  reignStart?: number | null;
+  reignEnd?: number | null;
   titles?: string[];
   parents?: string[];
   spouses?: string[];
@@ -78,10 +81,13 @@ function parseFigures(raw: string): ImportFigure[] | { error: string } {
     out.push({
       name,
       slug,
+      nativeName: typeof o.nativeName === "string" ? o.nativeName.trim() || null : null,
       dynasty: typeof o.dynasty === "string" ? o.dynasty.trim() || null : null,
       description: typeof o.description === "string" ? o.description : null,
       birthYear: typeof o.birthYear === "number" ? o.birthYear : null,
       deathYear: typeof o.deathYear === "number" ? o.deathYear : null,
+      reignStart: typeof o.reignStart === "number" ? o.reignStart : null,
+      reignEnd: typeof o.reignEnd === "number" ? o.reignEnd : null,
       titles: asArray<string>(o.titles)
         .map((t) => (typeof t === "string" ? t.trim() : ""))
         .filter(Boolean),
@@ -292,9 +298,12 @@ export async function applyImportAction(
             data: {
               slug: f.slug,
               name: f.name,
+              nativeName: f.nativeName ?? null,
               titles: f.titles ?? [],
               birthYear: f.birthYear ?? null,
               deathYear: f.deathYear ?? null,
+              reignStart: f.reignStart ?? null,
+              reignEnd: f.reignEnd ?? null,
               biography: f.description ?? null,
               dynastyId,
             },
