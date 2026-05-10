@@ -115,7 +115,10 @@ export default async function FigurePage(
             ) : (
               <p className="text-stone-500 italic">No biography available.</p>
             )}
-            <RecommendedReading />
+            <RecommendedReading
+              figureName={figure.name}
+              dynastyName={figure.dynasty?.name}
+            />
           </section>
 
           <aside className="space-y-6">

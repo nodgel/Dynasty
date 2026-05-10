@@ -1,12 +1,12 @@
-type Recommendation = { title: string; author: string };
+import { amazonSearchUrl, figureBookSearches } from "@/lib/amazon";
 
-const placeholderBooks: Recommendation[] = [
-  { title: "The Making of the Georgian Nation", author: "Ronald Grigor Suny" },
-  { title: "Bagrationi: A Royal House", author: "Cyril Toumanoff" },
-  { title: "Tamar: Queen of Queens", author: "Antony Eastmond" },
-];
+type Props = {
+  figureName: string;
+  dynastyName?: string | null;
+};
 
-export default function RecommendedReading() {
+export default function RecommendedReading({ figureName, dynastyName }: Props) {
+  const searches = figureBookSearches(figureName, dynastyName ?? null);
   return (
     <section
       aria-labelledby="recommended-reading-heading"
@@ -15,21 +15,26 @@ export default function RecommendedReading() {
       <h2 id="recommended-reading-heading" className="font-serif text-xl text-stone-900">
         Recommended Reading
       </h2>
-      <p className="mt-1 text-xs uppercase tracking-wide text-stone-500">
-        Affiliate links — ads disclosure
+      <p className="mt-1 text-xs text-stone-500">
+        As an Amazon Associate we earn from qualifying purchases.
       </p>
       <ul className="mt-4 grid gap-3 sm:grid-cols-3">
-        {placeholderBooks.map((b) => (
-          <li
-            key={b.title}
-            data-affiliate-slot
-            className="border border-dashed border-stone-300 bg-stone-50/60 p-4 text-sm"
-          >
-            <p className="font-serif text-stone-800">{b.title}</p>
-            <p className="text-xs text-stone-500 mt-1">{b.author}</p>
-            <p className="mt-2 text-[10px] uppercase tracking-widest text-stone-400">
-              Affiliate slot
-            </p>
+        {searches.map((s) => (
+          <li key={s.label}>
+            <a
+              href={amazonSearchUrl(s.query)}
+              target="_blank"
+              rel="sponsored noopener noreferrer"
+              className="block border border-stone-200 bg-stone-50/60 p-4 text-sm hover:border-stone-400 hover:bg-stone-100 transition-colors"
+            >
+              <p className="text-[10px] uppercase tracking-widest text-stone-500">
+                {s.label}
+              </p>
+              <p className="mt-2 font-serif text-stone-900">
+                Books about {s.label === "Dynasty" && dynastyName ? dynastyName : figureName}
+              </p>
+              <p className="mt-2 text-xs text-stone-500">Search on Amazon →</p>
+            </a>
           </li>
         ))}
       </ul>

@@ -126,11 +126,14 @@ export default function PrivacyPolicyPage() {
             transfers your IP address to Google.
           </li>
           <li>
-            <strong>Affiliate links.</strong> Some external links on this Site (notably in the
-            &ldquo;Recommended Reading&rdquo; sections) may be affiliate links. If you make a
-            purchase through one of these links, we may receive a small commission at no extra
-            cost to you. Affiliate networks set their own cookies on the destination site; we do
-            not receive personal information about your purchases.
+            <strong>Affiliate links — Amazon Associates.</strong> Dynastica is a participant in
+            the Amazon Services LLC Associates Program, an affiliate advertising program designed
+            to provide a means for sites to earn advertising fees by advertising and linking to
+            Amazon.com. As an Amazon Associate we earn from qualifying purchases. Affiliate links
+            (notably in the &ldquo;Recommended Reading&rdquo; sections) may carry a tracking
+            identifier so Amazon can attribute the purchase to this Site. Amazon sets its own
+            cookies on its destination pages; we do not receive personal information about your
+            purchases.
           </li>
         </ul>
 
