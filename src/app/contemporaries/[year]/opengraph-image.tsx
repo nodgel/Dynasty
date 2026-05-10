@@ -27,10 +27,10 @@ export default async function Image({ params }: { params: Promise<Params> }) {
       description: `${alive.length} royal figures alive across ${dynasties.size} dynast${
         dynasties.size === 1 ? "y" : "ies"
       } — drag the slider to scrub through history.`,
-      meta: alive
-        .slice(0, 3)
-        .map((f) => f.name)
-        .join("  ·  "),
+      // Dedupe by name in case the dataset has duplicate slugs for the same
+      // historical person (transliteration variants etc. — surfaced by the
+      // first contemporaries audit). Take up to three distinct names.
+      meta: [...new Set(alive.map((f) => f.name))].slice(0, 3).join("  ·  "),
     }),
     { ...OG_SIZE }
   );
