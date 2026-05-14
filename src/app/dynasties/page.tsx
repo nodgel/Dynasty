@@ -23,15 +23,49 @@ export default async function DynastiesIndexPage() {
       <header className="mb-8">
         <h1 className="font-serif text-3xl text-stone-900">Dynasties</h1>
         <p className="mt-2 text-stone-600 max-w-2xl">
-          Every ruling house catalogued in Dynastica. Click into a dynasty to see its full lineage
-          and the figures who defined it.
+          Every ruling house catalogued in Dynastica &mdash; {dynasties.length} in total. Click
+          into a dynasty to see its full lineage and the figures who defined it.
         </p>
+
+        <form
+          action="/search"
+          method="get"
+          role="search"
+          className="mt-5 max-w-xl"
+        >
+          <label htmlFor="dynasties-search" className="sr-only">
+            Search dynasties and figures
+          </label>
+          <div className="flex items-stretch rounded-md border border-stone-300 bg-white focus-within:border-stone-500 focus-within:ring-1 focus-within:ring-stone-400 overflow-hidden">
+            <input
+              id="dynasties-search"
+              type="search"
+              name="q"
+              autoComplete="off"
+              placeholder="Search a dynasty or figure…"
+              className="flex-1 min-w-0 px-4 py-2.5 text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none"
+            />
+            <button
+              type="submit"
+              className="px-5 bg-stone-900 text-white text-sm hover:bg-stone-700 transition-colors"
+            >
+              Search
+            </button>
+          </div>
+        </form>
+
         <nav aria-label="Browse" className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm">
           <Link href="/dynasties/region" className="wiki-link">
             Browse by region →
           </Link>
           <Link href="/dynasties/era" className="wiki-link">
             Browse by era →
+          </Link>
+          <Link href="/contemporaries" className="wiki-link">
+            Browse by year →
+          </Link>
+          <Link href="/random" prefetch={false} className="wiki-link">
+            Surprise me →
           </Link>
         </nav>
       </header>
