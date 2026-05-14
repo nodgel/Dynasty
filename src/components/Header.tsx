@@ -1,5 +1,5 @@
 import Link from "next/link";
-import SearchInput from "./SearchInput";
+import HeaderSearchSlot from "./HeaderSearchSlot";
 
 export default function Header() {
   return (
@@ -15,9 +15,7 @@ export default function Header() {
             <li><Link href="/about" className="hover:text-stone-900">About</Link></li>
           </ul>
         </nav>
-        <div className="ml-auto w-full max-w-xs">
-          <SearchInput />
-        </div>
+        <HeaderSearchSlot />
       </div>
     </header>
   );
