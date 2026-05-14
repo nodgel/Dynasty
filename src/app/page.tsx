@@ -1,13 +1,27 @@
 import Link from "next/link";
-import { listDynasties, listRecentDynasties } from "@/lib/queries";
+import { listDynasties, listRecentDynasties, listFiguresBySlugs } from "@/lib/queries";
 import AdSlot from "@/components/AdSlot";
 import DynastyCard from "@/components/DynastyCard";
+import Spotlight from "@/components/Spotlight";
 
 // Curated featured dynasties — deliberate picks of marquee houses, not the
 // alphabetical-first three. Order is the display order. If a slug isn't in
 // the DB it's silently skipped, so the page never errors when content rolls
 // over.
 const FEATURED_SLUGS = ["plantagenet", "austrian-habsburgs", "bagrationi"];
+
+// Curated portraits for the homepage spotlight strip. Order is display order.
+// Each figure must already have an imageUrl on file; ones that don't are
+// silently dropped by listFiguresBySlugs.
+const SPOTLIGHT_SLUGS = [
+  "eleanor-of-aquitaine",
+  "henry-viii-england",
+  "elizabeth-i-england",
+  "charles-v",
+  "maria-theresa",
+  "mary-queen-of-scots",
+  "franz-joseph-i",
+];
 
 // Showcase paths for the "Follow the bloodlines" section — figures whose
 // pages already cross dynasties via parent or spouse edges. Each entry points
@@ -57,9 +71,10 @@ const DISCOVERY: Array<{ href: string; label: string; blurb: string }> = [
 ];
 
 export default async function Home() {
-  const [allDynasties, recent] = await Promise.all([
+  const [allDynasties, recent, spotlight] = await Promise.all([
     listDynasties(),
     listRecentDynasties(4),
+    listFiguresBySlugs(SPOTLIGHT_SLUGS),
   ]);
 
   // Resolve featured slugs against the live DB, preserving curator order.
@@ -90,6 +105,8 @@ export default async function Home() {
           </Link>
         </div>
       </section>
+
+      <Spotlight figures={spotlight} />
 
       {featured.length > 0 && (
         <section aria-labelledby="featured-heading" className="mt-12">

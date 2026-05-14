@@ -21,6 +21,28 @@ export async function listDynasties() {
   }));
 }
 
+// Returns the figures in the curator-supplied order, dropping any whose slug
+// isn't in the DB. Used by the homepage portrait spotlight strip.
+export async function listFiguresBySlugs(slugs: string[]) {
+  if (slugs.length === 0) return [];
+  const rows = await prisma.historicalFigure.findMany({
+    where: { slug: { in: slugs } },
+    include: { dynasty: { select: { slug: true } } },
+  });
+  const bySlug = new Map(rows.map((r) => [r.slug, r]));
+  return slugs
+    .map((s) => bySlug.get(s))
+    .filter((r): r is NonNullable<typeof r> => Boolean(r))
+    .map((r) => ({
+      slug: r.slug,
+      name: r.name,
+      imageUrl: r.imageUrl,
+      birthYear: r.birthYear,
+      deathYear: r.deathYear,
+      dynastySlug: r.dynasty?.slug ?? null,
+    }));
+}
+
 // Recently added dynasties, newest first. Used on the homepage to give the
 // site a recency signal for returning visitors and crawlers.
 export async function listRecentDynasties(take = 4) {
