@@ -45,7 +45,12 @@ export default function AdUnit({
   }, [slotId]);
 
   return (
+    // AdSense's adsbygoogle script mutates this <ins> after the SSR pass
+    // (adds data-adsbygoogle-status="done" and injects an iframe), so
+    // React's hydration would log a mismatch on every page. suppressHydrationWarning
+    // tells React not to reconcile this subtree, which is what we want.
     <ins
+      suppressHydrationWarning
       className={`adsbygoogle ${className}`}
       style={{ display: "block", ...style }}
       data-ad-client={PUBLISHER_ID}
