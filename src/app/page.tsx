@@ -4,6 +4,7 @@ import AdSlot from "@/components/AdSlot";
 import DynastyCard from "@/components/DynastyCard";
 import Spotlight from "@/components/Spotlight";
 import BridgeGraphic from "@/components/BridgeGraphic";
+import HeroTree from "@/components/HeroTree";
 
 // Curated featured dynasties — deliberate picks of marquee houses, not the
 // alphabetical-first three. Order is the display order. If a slug isn't in
@@ -97,7 +98,8 @@ export default async function Home() {
       <AdSlot name="homeHeader" label="Header banner" size="970×90 leaderboard" className="mb-10" />
 
       <section className="text-center max-w-2xl mx-auto py-8">
-        <h1 className="font-serif text-4xl sm:text-5xl tracking-tight text-stone-900">
+        <HeroTree />
+        <h1 className="mt-4 font-serif text-4xl sm:text-5xl tracking-tight text-stone-900">
           The web of history&rsquo;s ruling houses
         </h1>
         <p className="mt-5 text-stone-600 leading-relaxed">
@@ -116,12 +118,50 @@ export default async function Home() {
             </>
           )}
         </p>
-        <div className="mt-7 flex justify-center gap-3">
+
+        <form
+          action="/search"
+          method="get"
+          role="search"
+          className="mt-7 mx-auto max-w-lg"
+        >
+          <label htmlFor="hero-search" className="sr-only">
+            Search dynasties, rulers, and figures
+          </label>
+          <div className="flex items-stretch rounded-md border border-stone-300 bg-white focus-within:border-stone-500 focus-within:ring-1 focus-within:ring-stone-400 overflow-hidden">
+            <input
+              id="hero-search"
+              type="search"
+              name="q"
+              autoComplete="off"
+              placeholder="Search a dynasty, ruler, or figure…"
+              className="flex-1 min-w-0 px-4 py-3 text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none"
+            />
+            <button
+              type="submit"
+              className="px-5 bg-stone-900 text-white text-sm hover:bg-stone-700 transition-colors"
+            >
+              Search
+            </button>
+          </div>
+        </form>
+
+        <div className="mt-5 flex flex-wrap justify-center items-center gap-x-5 gap-y-2 text-sm">
           <Link
             href="/dynasties"
-            className="inline-flex items-center rounded-md bg-stone-900 px-5 py-2.5 text-sm text-white hover:bg-stone-700"
+            className="text-stone-700 hover:text-stone-900 underline underline-offset-4 decoration-stone-300 hover:decoration-stone-700"
           >
-            Explore the dynasties &rarr;
+            Browse all {allDynasties.length} dynasties
+          </Link>
+          <span className="text-stone-300" aria-hidden>
+            &middot;
+          </span>
+          <Link
+            href="/random"
+            prefetch={false}
+            className="text-stone-700 hover:text-stone-900 underline underline-offset-4 decoration-stone-300 hover:decoration-stone-700"
+          >
+            Surprise me &rarr;
           </Link>
         </div>
       </section>
