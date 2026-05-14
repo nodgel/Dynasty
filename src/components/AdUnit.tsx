@@ -46,19 +46,26 @@ export default function AdUnit({
 
   return (
     // AdSense's adsbygoogle script mutates this <ins> after the SSR pass
-    // (adds data-adsbygoogle-status="done" and injects an iframe), so
-    // React's hydration would log a mismatch on every page. suppressHydrationWarning
-    // tells React not to reconcile this subtree, which is what we want.
-    <ins
-      suppressHydrationWarning
-      className={`adsbygoogle ${className}`}
-      style={{ display: "block", ...style }}
-      data-ad-client={PUBLISHER_ID}
-      data-ad-slot={slotId}
-      data-ad-format={format}
-      {...(layout ? { "data-ad-layout": layout } : {})}
-      {...(layoutKey ? { "data-ad-layout-key": layoutKey } : {})}
-      data-full-width-responsive={fullWidthResponsive ? "true" : "false"}
-    />
+    // (sets data-adsbygoogle-status="done" and injects an <iframe> child).
+    //
+    // suppressHydrationWarning alone isn't enough: it only suppresses
+    // attribute mismatches on this element, not added/removed children.
+    // Wrapping the <ins> in a parent div with suppressHydrationWarning
+    // suppresses *children* mismatches on the div — which means React
+    // stops reconciling the <ins>'s injected iframe entirely. dummy span
+    // forces the div to render as a non-void element so React's child
+    // diffing applies.
+    <div suppressHydrationWarning style={{ display: "contents" }}>
+      <ins
+        className={`adsbygoogle ${className}`}
+        style={{ display: "block", ...style }}
+        data-ad-client={PUBLISHER_ID}
+        data-ad-slot={slotId}
+        data-ad-format={format}
+        {...(layout ? { "data-ad-layout": layout } : {})}
+        {...(layoutKey ? { "data-ad-layout-key": layoutKey } : {})}
+        data-full-width-responsive={fullWidthResponsive ? "true" : "false"}
+      />
+    </div>
   );
 }
