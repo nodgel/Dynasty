@@ -21,6 +21,27 @@ export async function listDynasties() {
   }));
 }
 
+// Recently added dynasties, newest first. Used on the homepage to give the
+// site a recency signal for returning visitors and crawlers.
+export async function listRecentDynasties(take = 4) {
+  const rows = await prisma.dynasty.findMany({
+    orderBy: { createdAt: "desc" },
+    take,
+    include: { _count: { select: { figures: true } } },
+  });
+  return rows.map((d) => ({
+    id: d.id,
+    slug: d.slug,
+    name: d.name,
+    region: d.region,
+    description: d.description,
+    foundedYear: d.foundedYear,
+    endedYear: d.endedYear,
+    coatOfArmsUrl: d.coatOfArmsUrl,
+    figureCount: d._count.figures,
+  }));
+}
+
 export async function getDynastyBySlug(slug: string) {
   const d = await prisma.dynasty.findUnique({
     where: { slug },
