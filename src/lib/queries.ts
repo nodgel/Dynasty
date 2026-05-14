@@ -21,6 +21,24 @@ export async function listDynasties() {
   }));
 }
 
+// Headline-stat aggregate for the homepage: total dynasties, total figures,
+// and the year span between the earliest dynasty founding and the latest
+// dynasty ending (or the current year for still-reigning houses).
+export async function getSiteStats() {
+  const [dynastyCount, figureCount, yearAgg] = await Promise.all([
+    prisma.dynasty.count(),
+    prisma.historicalFigure.count(),
+    prisma.dynasty.aggregate({
+      _min: { foundedYear: true },
+      _max: { endedYear: true },
+    }),
+  ]);
+  const earliest = yearAgg._min.foundedYear ?? null;
+  const latest = yearAgg._max.endedYear ?? new Date().getUTCFullYear();
+  const yearSpan = earliest != null ? latest - earliest : null;
+  return { dynastyCount, figureCount, yearSpan };
+}
+
 // Returns the figures in the curator-supplied order, dropping any whose slug
 // isn't in the DB. Used by the homepage portrait spotlight strip.
 export async function listFiguresBySlugs(slugs: string[]) {

@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { listDynasties, listRecentDynasties, listFiguresBySlugs } from "@/lib/queries";
+import { listDynasties, listRecentDynasties, listFiguresBySlugs, getSiteStats } from "@/lib/queries";
 import AdSlot from "@/components/AdSlot";
 import DynastyCard from "@/components/DynastyCard";
 import Spotlight from "@/components/Spotlight";
+import BridgeGraphic from "@/components/BridgeGraphic";
 
 // Curated featured dynasties — deliberate picks of marquee houses, not the
 // alphabetical-first three. Order is the display order. If a slug isn't in
@@ -33,12 +34,6 @@ const BLOODLINES: Array<{
   blurb: string;
 }> = [
   {
-    href: "/dynasties/plantagenet/eleanor-of-aquitaine",
-    label: "Eleanor of Aquitaine",
-    blurb:
-      "Queen of France, then of England — her two royal husbands link the Plantagenet and Capetian houses.",
-  },
-  {
     href: "/dynasties/austrian-habsburgs/philip-the-handsome",
     label: "Philip the Handsome",
     blurb:
@@ -49,6 +44,12 @@ const BLOODLINES: Array<{
     label: "Margaret Tudor",
     blurb:
       "Daughter of Henry VII, married to James IV of Scotland — her great-grandson united the English and Scottish crowns.",
+  },
+  {
+    href: "/dynasties/plantagenet/isabella-of-france",
+    label: "Isabella of France",
+    blurb:
+      "Daughter of Philip IV of France, wife of Edward II of England. Through her, the English king claimed the French throne — and the Hundred Years' War followed.",
   },
 ];
 
@@ -71,11 +72,19 @@ const DISCOVERY: Array<{ href: string; label: string; blurb: string }> = [
 ];
 
 export default async function Home() {
-  const [allDynasties, recent, spotlight] = await Promise.all([
+  const [allDynasties, recent, spotlight, stats] = await Promise.all([
     listDynasties(),
     listRecentDynasties(4),
     listFiguresBySlugs(SPOTLIGHT_SLUGS),
+    getSiteStats(),
   ]);
+
+  // Round the year span down to the nearest 500 so we don't show a brittle
+  // figure like "3,468 years" that ticks unhelpfully every time a new
+  // dynasty is added.
+  const yearsLabel = stats.yearSpan != null
+    ? `${Math.floor(stats.yearSpan / 500) * 500}+ years of history`
+    : null;
 
   // Resolve featured slugs against the live DB, preserving curator order.
   const bySlug = new Map(allDynasties.map((d) => [d.slug, d]));
@@ -89,19 +98,30 @@ export default async function Home() {
 
       <section className="text-center max-w-2xl mx-auto py-8">
         <h1 className="font-serif text-4xl sm:text-5xl tracking-tight text-stone-900">
-          A genealogy of history&rsquo;s ruling houses
+          The web of history&rsquo;s ruling houses
         </h1>
-        <p className="mt-4 text-stone-600 leading-relaxed">
-          Dynastica maps the bloodlines, marriages, and successions of the dynasties that shaped
-          civilizations. Browse interactive family trees and read concise, sourced biographies of
-          the figures behind them.
+        <p className="mt-5 text-stone-600 leading-relaxed">
+          Royal marriages don&rsquo;t respect dynasties. Dynastica maps the bloodlines, marriages,
+          and successions of the houses that shaped civilizations &mdash; and the figures who
+          connect them across centuries and borders.
         </p>
-        <div className="mt-6 flex justify-center gap-3">
+        <p className="mt-5 text-sm uppercase tracking-[0.18em] text-stone-500">
+          {stats.dynastyCount} dynasties
+          <span className="mx-2 text-stone-300">&middot;</span>
+          {stats.figureCount} figures
+          {yearsLabel && (
+            <>
+              <span className="mx-2 text-stone-300">&middot;</span>
+              {yearsLabel}
+            </>
+          )}
+        </p>
+        <div className="mt-7 flex justify-center gap-3">
           <Link
             href="/dynasties"
-            className="inline-flex items-center rounded-md bg-stone-900 px-4 py-2 text-sm text-white hover:bg-stone-700"
+            className="inline-flex items-center rounded-md bg-stone-900 px-5 py-2.5 text-sm text-white hover:bg-stone-700"
           >
-            Browse {allDynasties.length} dynasties
+            Explore the dynasties &rarr;
           </Link>
         </div>
       </section>
@@ -153,12 +173,26 @@ export default async function Home() {
             Follow the bloodlines
           </h2>
           <p className="mt-2 text-stone-600">
-            Royal marriages do not respect dynasties. A queen who married into one house was born
-            in another, and her children inherit the claims of both. Start with one of these
-            figures and walk the family tree across dynasties.
+            A queen who married into one house was born in another, and her children inherit the
+            claims of both. Eleanor of Aquitaine wore the crowns of France and England within
+            fifteen years. Her grandson was Saint Louis; her great-grandson was King John.
           </p>
         </div>
-        <ul className="mt-6 grid gap-3 sm:grid-cols-3">
+
+        <div className="mt-7 mb-2 max-w-3xl mx-auto">
+          <BridgeGraphic
+            leftDynasty="Plantagenet"
+            rightDynasty="Capetian"
+            bridgeName="Eleanor of Aquitaine"
+            bridgeYears="1122 – 1204"
+            href="/dynasties/plantagenet/eleanor-of-aquitaine"
+          />
+        </div>
+
+        <p className="mt-6 mb-1 text-center text-xs uppercase tracking-wider text-stone-500">
+          More figures who crossed dynasties
+        </p>
+        <ul className="mt-3 grid gap-3 sm:grid-cols-3">
           {BLOODLINES.map((b) => (
             <li key={b.href}>
               <Link
