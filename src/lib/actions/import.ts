@@ -348,8 +348,10 @@ export async function applyImportAction(
   // Revalidate every dynasty page that may have new figures or new edges.
   revalidatePath("/");
   revalidatePath("/dynasties");
+  revalidatePath("/contemporaries");
   revalidatePath("/sitemap.xml");
-  // For touched dynasties:
+
+  // For touched dynasties — those receiving new figures.
   const touchedDynastyIds = new Set<number>();
   for (const f of figuresToCreate) {
     if (f.dynasty) {
@@ -363,6 +365,33 @@ export async function applyImportAction(
       select: { slug: true },
     });
     for (const { slug } of slugs) revalidatePath(`/dynasties/${slug}`);
+  }
+
+  // Revalidate every figure page whose relations changed. Includes both
+  // the figures we just created AND any pre-existing figures that gained
+  // a new parent/child/spouse edge during this import — without this, the
+  // pre-existing figure's family-relations sidebar stays stale and a
+  // manual rebuild is needed to surface cross-dynasty bridges.
+  const touchedFigureSlugs = new Set<string>();
+  for (const f of figuresToCreate) touchedFigureSlugs.add(f.slug);
+  for (const e of pcEdges) {
+    touchedFigureSlugs.add(e.parent);
+    touchedFigureSlugs.add(e.child);
+  }
+  for (const [a, b] of spEdges) {
+    touchedFigureSlugs.add(a);
+    touchedFigureSlugs.add(b);
+  }
+  if (touchedFigureSlugs.size) {
+    const figureRows = await prisma.historicalFigure.findMany({
+      where: { slug: { in: [...touchedFigureSlugs] } },
+      select: { slug: true, dynasty: { select: { slug: true } } },
+    });
+    for (const f of figureRows) {
+      // Canonical figure page (under its dynasty) and the legacy redirect path.
+      if (f.dynasty) revalidatePath(`/dynasties/${f.dynasty.slug}/${f.slug}`);
+      revalidatePath(`/figures/${f.slug}`);
+    }
   }
 
   return {
