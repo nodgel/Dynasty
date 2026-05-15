@@ -45,16 +45,17 @@ enum EventKind {
 // Years' War can show up on Plantagenet, Valois, and Capetian pages with
 // different per-dynasty roles.
 model HistoricalEvent {
-  id           Int            @id @default(autoincrement())
-  slug         String         @unique
-  title        String
-  year         Int?
-  endYear      Int?
-  description  String?        @db.Text
-  kind         EventKind      @default(OTHER)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  participants DynastyEvent[]
+  id              Int            @id @default(autoincrement())
+  slug            String         @unique
+  title           String
+  year            Int?
+  endYear         Int?
+  description     String?        @db.Text
+  kind            EventKind      @default(OTHER)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  participants    DynastyEvent[]
+  figures         FigureEvent[]
 
   @@index([slug])
 }
@@ -70,6 +71,22 @@ model DynastyEvent {
   event   HistoricalEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
   @@id([dynastyId, eventId])
+  @@index([eventId])
+}
+
+// Join row: one figure's involvement in one event, with an optional free-form
+// role like "commander", "victim", "signatory", "witness". Figures are the
+// natural participant unit for many events (battles have generals, treaties
+// have signatories) — dynasties roll up as the aggregate.
+model FigureEvent {
+  figureId Int
+  eventId  Int
+  role     String?
+
+  figure HistoricalFigure @relation(fields: [figureId], references: [id], onDelete: Cascade)
+  event  HistoricalEvent  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@id([figureId, eventId])
   @@index([eventId])
 }
 
@@ -98,6 +115,9 @@ model HistoricalFigure {
   // Spouses: symmetric self M:M via explicit join table
   spouseLinksA Spouse[] @relation("SpouseA")
   spouseLinksB Spouse[] @relation("SpouseB")
+
+  // Events this figure participated in
+  events FigureEvent[]
 
   @@index([slug])
   @@index([dynastyId])

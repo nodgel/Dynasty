@@ -45,6 +45,12 @@ export const AD_SLOTS = {
   figureHeader: "5114495412",
   // Single figure page, right rail
   figureSidebar: "3801413743",
+  // Events index page, top banner
+  eventsIndexHeader: "5114495412",
+  // Single event page, top banner
+  eventHeader: "5114495412",
+  // Single event page, right rail
+  eventSidebar: "3801413743",
 } as const;
 
 export type AdSlotName = keyof typeof AD_SLOTS;

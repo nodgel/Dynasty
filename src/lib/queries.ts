@@ -393,3 +393,136 @@ export async function getDynastyEvents(dynastyId: number) {
     })
     .sort((a, b) => (a.year ?? Number.MAX_SAFE_INTEGER) - (b.year ?? Number.MAX_SAFE_INTEGER));
 }
+
+// Events for a specific figure — used in the figure-page Events section.
+// Sorted chronologically. Includes the figure's own role and a small
+// summary of other participating figures + dynasties.
+export async function getFigureEvents(figureId: number) {
+  const rows = await prisma.figureEvent.findMany({
+    where: { figureId },
+    include: {
+      event: {
+        include: {
+          figures: {
+            include: { figure: { select: { id: true, slug: true, name: true, dynasty: { select: { slug: true } } } } },
+          },
+          participants: {
+            include: { dynasty: { select: { slug: true, name: true } } },
+          },
+        },
+      },
+    },
+  });
+  return rows
+    .map((row) => {
+      const e = row.event;
+      return {
+        id: e.id,
+        slug: e.slug,
+        title: e.title,
+        year: e.year,
+        endYear: e.endYear,
+        kind: e.kind,
+        description: e.description,
+        ownRole: row.role,
+        otherFigures: e.figures
+          .filter((f) => f.figureId !== figureId)
+          .map((f) => ({
+            slug: f.figure.slug,
+            name: f.figure.name,
+            dynastySlug: f.figure.dynasty?.slug ?? null,
+            role: f.role,
+          })),
+        dynasties: e.participants.map((p) => ({
+          slug: p.dynasty.slug,
+          name: p.dynasty.name,
+          role: p.role,
+        })),
+      };
+    })
+    .sort((a, b) => (a.year ?? Number.MAX_SAFE_INTEGER) - (b.year ?? Number.MAX_SAFE_INTEGER));
+}
+
+// All events, used for the events index page. Returns enough metadata to
+// render cards: title, slug, year span, kind, short description, and
+// participant counts.
+export async function listAllEvents() {
+  const rows = await prisma.historicalEvent.findMany({
+    orderBy: [{ year: "asc" }, { title: "asc" }],
+    include: {
+      _count: { select: { participants: true, figures: true } },
+    },
+  });
+  return rows.map((e) => ({
+    id: e.id,
+    slug: e.slug,
+    title: e.title,
+    year: e.year,
+    endYear: e.endYear,
+    kind: e.kind,
+    description: e.description,
+    dynastyCount: e._count.participants,
+    figureCount: e._count.figures,
+  }));
+}
+
+// Single event with full participant detail for /events/[slug].
+export async function getEventBySlug(slug: string) {
+  const e = await prisma.historicalEvent.findUnique({
+    where: { slug },
+    include: {
+      participants: {
+        include: { dynasty: { select: { slug: true, name: true, region: true } } },
+      },
+      figures: {
+        include: {
+          figure: {
+            select: {
+              id: true,
+              slug: true,
+              name: true,
+              birthYear: true,
+              deathYear: true,
+              imageUrl: true,
+              dynasty: { select: { slug: true, name: true } },
+            },
+          },
+        },
+      },
+    },
+  });
+  if (!e) return null;
+  return {
+    id: e.id,
+    slug: e.slug,
+    title: e.title,
+    year: e.year,
+    endYear: e.endYear,
+    kind: e.kind,
+    description: e.description,
+    dynasties: e.participants
+      .map((p) => ({
+        slug: p.dynasty.slug,
+        name: p.dynasty.name,
+        region: p.dynasty.region,
+        role: p.role,
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name)),
+    figures: e.figures
+      .map((f) => ({
+        slug: f.figure.slug,
+        name: f.figure.name,
+        birthYear: f.figure.birthYear,
+        deathYear: f.figure.deathYear,
+        imageUrl: f.figure.imageUrl,
+        dynastySlug: f.figure.dynasty?.slug ?? null,
+        dynastyName: f.figure.dynasty?.name ?? null,
+        role: f.role,
+      }))
+      .sort((a, b) => (a.birthYear ?? 9999) - (b.birthYear ?? 9999)),
+  };
+}
+
+export async function listAllEventSlugs() {
+  return prisma.historicalEvent.findMany({ select: { slug: true } });
+}

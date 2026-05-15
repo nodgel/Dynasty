@@ -4,8 +4,9 @@ import { notFound, redirect } from "next/navigation";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import AdSlot from "@/components/AdSlot";
 import FamilyRelations from "@/components/FamilyRelations";
+import FigureEvents from "@/components/FigureEvents";
 import RecommendedReading from "@/components/RecommendedReading";
-import { getFigureBySlug, listAllFigureSlugs } from "@/lib/queries";
+import { getFigureBySlug, getFigureEvents, listAllFigureSlugs } from "@/lib/queries";
 import { formatYear, formatYearRange } from "@/lib/format";
 import JsonLd, { personLd } from "@/components/JsonLd";
 import EditFromSiteLink from "@/components/admin/EditFromSiteLink";
@@ -57,6 +58,7 @@ export default async function FigurePage(
   }
 
   const yrs = formatYearRange(figure.birthYear, figure.deathYear) || null;
+  const events = await getFigureEvents(figure.id);
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8">
@@ -115,6 +117,7 @@ export default async function FigurePage(
             ) : (
               <p className="text-stone-500 italic">No biography available.</p>
             )}
+            <FigureEvents events={events} />
             <RecommendedReading
               figureName={figure.name}
               dynastyName={figure.dynasty?.name}

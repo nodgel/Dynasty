@@ -1,7 +1,14 @@
 import Link from "next/link";
 import { formatYear } from "@/lib/format";
 
-type Other = { slug: string; name: string; role: string | null };
+type OtherFigure = {
+  slug: string;
+  name: string;
+  dynastySlug: string | null;
+  role: string | null;
+};
+
+type Dynasty = { slug: string; name: string; role: string | null };
 
 type EventEntry = {
   id: number;
@@ -12,7 +19,8 @@ type EventEntry = {
   kind: "CONFLICT" | "ALLIANCE" | "MARRIAGE" | "SUCCESSION" | "OTHER";
   description: string | null;
   ownRole: string | null;
-  otherParticipants: Other[];
+  otherFigures: OtherFigure[];
+  dynasties: Dynasty[];
 };
 
 const KIND_BADGE: Record<EventEntry["kind"], { label: string; className: string }> = {
@@ -31,59 +39,60 @@ function formatEventDate(year: number | null, endYear: number | null): string | 
   return formatYear(year);
 }
 
-export default function RelatedEvents({ events }: { events: EventEntry[] }) {
+export default function FigureEvents({ events }: { events: EventEntry[] }) {
   if (events.length === 0) return null;
 
   return (
-    <section aria-labelledby="related-events-heading" className="mt-10">
-      <h2 id="related-events-heading" className="font-serif text-2xl text-stone-900 mb-3">
-        Related events
+    <section aria-labelledby="figure-events-heading" className="mt-12 border-t border-stone-200 pt-8">
+      <h2 id="figure-events-heading" className="font-serif text-xl text-stone-900 mb-4">
+        Events
       </h2>
       <ul className="space-y-3">
         {events.map((e) => {
           const badge = KIND_BADGE[e.kind];
           const date = formatEventDate(e.year, e.endYear);
           return (
-            <li
-              key={e.id}
-              className="rounded-md border border-stone-200 bg-white p-4"
-            >
+            <li key={e.id} className="rounded-md border border-stone-200 bg-white p-4">
               <div className="flex flex-wrap items-baseline gap-2">
                 <span
                   className={`inline-block text-[10px] uppercase tracking-widest border rounded px-1.5 py-0.5 ${badge.className}`}
                 >
                   {badge.label}
                 </span>
-                <h3 className="font-serif text-lg text-stone-900">
-                  <Link
-                    href={`/events/${e.slug}`}
-                    className="hover:text-stone-600"
-                  >
+                <h3 className="font-serif text-base text-stone-900">
+                  <Link href={`/events/${e.slug}`} className="hover:text-stone-600">
                     {e.title}
                   </Link>
                 </h3>
                 {date && <span className="text-xs text-stone-500">{date}</span>}
                 {e.ownRole && (
-                  <span className="text-xs text-stone-500 italic">· this dynasty: {e.ownRole}</span>
+                  <span className="text-xs text-stone-500 italic">&middot; as {e.ownRole}</span>
                 )}
               </div>
               {e.description && (
-                <p className="mt-2 text-sm text-stone-700 leading-relaxed line-clamp-3">
+                <p className="mt-2 text-sm text-stone-700 leading-relaxed line-clamp-2">
                   {e.description}
                 </p>
               )}
-              {e.otherParticipants.length > 0 && (
+              {e.otherFigures.length > 0 && (
                 <p className="mt-2 text-xs text-stone-500">
-                  Also involved:{" "}
-                  {e.otherParticipants.map((o, i) => (
-                    <span key={o.slug}>
-                      {i > 0 && ", "}
-                      <Link href={`/dynasties/${o.slug}`} className="wiki-link">
-                        {o.name}
-                      </Link>
-                      {o.role && <span className="italic"> ({o.role})</span>}
-                    </span>
-                  ))}
+                  Also there:{" "}
+                  {e.otherFigures.slice(0, 6).map((o, i) => {
+                    const href = o.dynastySlug
+                      ? `/dynasties/${o.dynastySlug}/${o.slug}`
+                      : `/figures/${o.slug}`;
+                    return (
+                      <span key={o.slug}>
+                        {i > 0 && ", "}
+                        <Link href={href} className="wiki-link">
+                          {o.name}
+                        </Link>
+                      </span>
+                    );
+                  })}
+                  {e.otherFigures.length > 6 && (
+                    <span className="text-stone-400"> +{e.otherFigures.length - 6} more</span>
+                  )}
                 </p>
               )}
             </li>

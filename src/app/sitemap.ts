@@ -1,20 +1,22 @@
 import type { MetadataRoute } from "next";
-import { listAllDynastySlugs, listAllFigureSlugs } from "@/lib/queries";
+import { listAllDynastySlugs, listAllFigureSlugs, listAllEventSlugs } from "@/lib/queries";
 import { REGIONS } from "@/lib/regions";
 import { ERAS } from "@/lib/eras";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [dynasties, figures] = await Promise.all([
+  const [dynasties, figures, events] = await Promise.all([
     listAllDynastySlugs(),
     listAllFigureSlugs(),
+    listAllEventSlugs(),
   ]);
 
   const now = new Date();
   const staticEntries: MetadataRoute.Sitemap = [
     { url: `${SITE_URL}/`, lastModified: now, changeFrequency: "weekly", priority: 1.0 },
     { url: `${SITE_URL}/dynasties`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${SITE_URL}/events`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: `${SITE_URL}/dynasties/region`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
     { url: `${SITE_URL}/dynasties/era`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
     { url: `${SITE_URL}/contemporaries`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
@@ -64,6 +66,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     }));
 
+  const eventEntries: MetadataRoute.Sitemap = events.map((e) => ({
+    url: `${SITE_URL}/events/${e.slug}`,
+    lastModified: now,
+    changeFrequency: "monthly",
+    priority: 0.7,
+  }));
+
   return [
     ...staticEntries,
     ...regionEntries,
@@ -71,5 +80,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...contemporaryEntries,
     ...dynastyEntries,
     ...figureEntries,
+    ...eventEntries,
   ];
 }
