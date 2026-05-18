@@ -116,7 +116,11 @@ export default async function DynastyOverviewPage(
                 <h2 id="overview-heading" className="font-serif text-2xl text-stone-900 mb-3">
                   Overview
                 </h2>
-                <p className="prose-bio">{dynasty.description}</p>
+                <div className="prose-bio">
+                  {dynasty.description.split(/\n\n+/).map((p, i) => (
+                    <p key={i}>{p}</p>
+                  ))}
+                </div>
               </section>
             )}
 

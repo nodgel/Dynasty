@@ -80,6 +80,20 @@ export default async function EraPage({ params }: { params: Promise<Params> }) {
         </p>
       </header>
 
+      {era.leadEssay && (
+        <section
+          aria-labelledby="era-essay-heading"
+          className="mb-10 max-w-3xl prose-bio"
+        >
+          <h2 id="era-essay-heading" className="sr-only">
+            About the {era.name} era
+          </h2>
+          {era.leadEssay.split(/\n\n+/).map((p, i) => (
+            <p key={i}>{p}</p>
+          ))}
+        </section>
+      )}
+
       {dynasties.length === 0 ? (
         <p className="text-stone-500">No dynasties yet in this era.</p>
       ) : (

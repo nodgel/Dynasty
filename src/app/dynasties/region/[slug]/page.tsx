@@ -75,6 +75,20 @@ export default async function RegionPage({ params }: { params: Promise<Params> }
         </p>
       </header>
 
+      {region.leadEssay && (
+        <section
+          aria-labelledby="region-essay-heading"
+          className="mb-10 max-w-3xl prose-bio"
+        >
+          <h2 id="region-essay-heading" className="sr-only">
+            About {region.name}
+          </h2>
+          {region.leadEssay.split(/\n\n+/).map((p, i) => (
+            <p key={i}>{p}</p>
+          ))}
+        </section>
+      )}
+
       {dynasties.length === 0 ? (
         <p className="text-stone-500">No dynasties yet for this region. Check back as the database grows.</p>
       ) : (
